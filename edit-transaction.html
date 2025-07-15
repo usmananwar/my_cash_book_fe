@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Transaction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Transaction</h1>
+        <form id="editTransactionForm">
+            <input type="hidden" id="transactionId">
+            <input type="number" id="editAmount" placeholder="Amount" required>
+            <input type="text" id="editDescription" placeholder="Description" required>
+            <select id="editType" required>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+            </select>
+            <button type="submit">Save Changes</button>
+        </form>
+        <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+    </div>
+    <script type="module" src="edit-transaction.js"></script>
+</body>
+</html>
