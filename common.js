@@ -1,6 +1,3 @@
-// common.js
-
-// common.js
 
 // API Base URL - automatically detects environment
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -8,7 +5,7 @@ const isDevelopment = isLocalhost || window.location.hostname.includes('localhos
 
 export const API_BASE = isDevelopment
     ? 'https://192.168.0.17:8080/api'  // Development
-    : 'http://24.52.208.248:9747/api';  // Production - Using HTTP to avoid SSL certificate issues with IP
+    : 'https://pindrow.site/api';  // Production - Using HTTP to avoid SSL certificate issues with IP
 
 // Alternative: You can also use environment detection for multiple environments
 // export const API_BASE = (() => {
