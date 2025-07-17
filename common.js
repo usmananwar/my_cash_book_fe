@@ -3,7 +3,7 @@
 // API Base URL - automatically detects environment
 export const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'https://192.168.0.17:8080/api'  // Development
-    : 'https://your-backend-app.onrender.com/api';  // Production - Update this with your actual backend URL
+    : 'http:104.28.240.123:80/api';  // Production - Update this with your actual backend URL
 
 export function getJwtToken() {
     return localStorage.getItem('jwtToken');
