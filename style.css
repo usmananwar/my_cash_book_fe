@@ -1,4 +1,9 @@
-body {
+/* Disable scrolling on all elements */
+* {
+    overflow: hidden;
+}
+
+html, body {
     font-family: 'Roboto', sans-serif;
     background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
     margin: 0;
@@ -7,6 +12,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .container {
@@ -16,9 +23,12 @@ body {
     padding: 24px;
     width: 100%;
     max-width: 400px; /* Changed from 1200px to 400px */
+    max-height: 90vh;
     margin: 0 auto;
     text-align: center;
     display: block;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -133,10 +143,12 @@ th {
 .dashboard-table-container {
     display: block;
     width: 100%;
-    overflow-x: auto;
     margin-bottom: 24px;
     max-width: 100%;
     box-sizing: border-box;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .dashboard-table {
