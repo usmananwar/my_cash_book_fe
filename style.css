@@ -22,7 +22,23 @@ html, body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 24px;
     width: 100%;
-    max-width: 400px; /* Changed from 1200px to 400px */
+    max-width: 600px; /* Increased from 400px for better consistency */
+    max-height: 90vh;
+    margin: 0 auto;
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Smaller container for simple forms (login, register, credit, debit) */
+.container-small {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
     max-height: 90vh;
     margin: 0 auto;
     text-align: center;
