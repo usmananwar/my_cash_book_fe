@@ -1,9 +1,21 @@
 // common.js
 
+// common.js
+
 // API Base URL - automatically detects environment
-export const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const isDevelopment = isLocalhost || window.location.hostname.includes('localhost');
+
+export const API_BASE = isDevelopment
     ? 'https://192.168.0.17:8080/api'  // Development
-    : 'https://24.52.208.248:9747/api';  // Production - Update this with your actual backend URL
+    : 'http://24.52.208.248:9747/api';  // Production - Using HTTP to avoid SSL certificate issues with IP
+
+// Alternative: You can also use environment detection for multiple environments
+// export const API_BASE = (() => {
+//     if (isDevelopment) return 'https://192.168.0.17:8080/api';
+//     if (window.location.hostname.includes('render.com')) return 'https://your-backend.onrender.com/api';
+//     return 'http://24.52.208.248:9747/api'; // Fallback
+// })();
 
 export function getJwtToken() {
     return localStorage.getItem('jwtToken');
