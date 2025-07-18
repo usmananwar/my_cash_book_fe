@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Debit - My Cash Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container-small">
-        <h1>Add Debit</h1>
+    <div class="container">
+        <h1>💸 Add Expense</h1>
         <form id="debitForm">
-            <input type="number" id="debitAmount" placeholder="Debit Amount" required>
-            <input type="text" id="debitDesc" placeholder="Description" required>
-            <button type="submit">Add Debit</button>
+            <input type="number" id="debitAmount" placeholder="Enter amount" required step="0.01">
+            <input type="text" id="debitDesc" placeholder="What did you spend money on?" required>
+            <button type="submit" class="btn-secondary">Add Expense</button>
         </form>
-        <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        <button onclick="window.location.href='dashboard.html'">← Back to Dashboard</button>
     </div>
     <script type="module" src="debit.js"></script>
 </body>

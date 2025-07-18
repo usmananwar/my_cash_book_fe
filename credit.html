@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Credit - My Cash Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container-small">
-        <h1>Add Credit</h1>
+    <div class="container">
+        <h1>💰 Add Credit</h1>
         <form id="creditForm">
-            <input type="number" id="creditAmount" placeholder="Credit Amount" required>
-            <input type="text" id="creditDesc" placeholder="Description" required>
+            <input type="number" id="creditAmount" placeholder="Enter amount" required step="0.01">
+            <input type="text" id="creditDesc" placeholder="What did you receive money for?" required>
             <button type="submit">Add Credit</button>
         </form>
-        <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        <button onclick="window.location.href='dashboard.html'" class="btn-secondary">← Back to Dashboard</button>
     </div>
     <script type="module" src="credit.js"></script>
 </body>

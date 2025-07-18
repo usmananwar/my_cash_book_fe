@@ -4,7 +4,7 @@ const isLocalhost = window.location.hostname === 'localhost' || window.location.
 const isDevelopment = isLocalhost || window.location.hostname.includes('localhost');
 
 export const API_BASE = isDevelopment
-    ? 'https://192.168.0.17:8080/api'  // Development
+    ? 'http://192.168.0.17:9747/api'  // Development
     : 'https://api.pindrow.site/api';  // Production via Cloudflare proxy
 
 // Alternative: You can also use environment detection for multiple environments

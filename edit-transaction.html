@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction</title>
+    <title>Edit Transaction - My Cash Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container-small">
-        <h1>Edit Transaction</h1>
+    <div class="container">
+        <h1>✏️ Edit Transaction</h1>
         <form id="editTransactionForm">
             <input type="hidden" id="transactionId">
-            <input type="number" id="editAmount" placeholder="Amount" required>
+            <input type="number" id="editAmount" placeholder="Amount" required step="0.01">
             <input type="text" id="editDescription" placeholder="Description" required>
             <select id="editType" required>
-                <option value="credit">Credit</option>
-                <option value="debit">Debit</option>
+                <option value="">Select Type</option>
+                <option value="credit">💰 Credit (Income)</option>
+                <option value="debit">💸 Debit (Expense)</option>
             </select>
             <button type="submit">Save Changes</button>
         </form>
-        <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        <button onclick="window.location.href='dashboard.html'" class="btn-secondary">← Back to Dashboard</button>
     </div>
     <script type="module" src="edit-transaction.js"></script>
 </body>

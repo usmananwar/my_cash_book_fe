@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - My Cash Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Dashboard</h1>
+        <h1>💰 My Cash Book</h1>
         <div id="balanceDisplay" style="font-weight:bold; font-size:1.2em; margin: 16px 0;"></div>
         <div class="actions">
-            <button id="creditBtn">Credit</button>
-            <button id="debitBtn">Debit</button>
+            <button id="creditBtn">+ Add Credit</button>
+            <button id="debitBtn" class="btn-secondary">- Add Debit</button>
         </div>
         <div id="formSection" style="display:none;"></div>
         <div class="dashboard-table-container">
@@ -22,13 +25,13 @@
                         <th>Description</th>
                         <th>Type</th>
                         <th>Amount</th>
-                        <th>Timestamp</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
-        <button id="logoutBtn">Logout</button>
+        <button id="logoutBtn" class="btn-secondary">Sign Out</button>
     </div>
     <script type="module" src="dashboard.js"></script>
 </body>
