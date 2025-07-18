@@ -1,4 +1,3 @@
-
 // API Base URL - automatically detects environment
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const isDevelopment = isLocalhost || window.location.hostname.includes('localhost');
@@ -35,4 +34,111 @@ export async function handleAuthRedirect(res) {
         return true;
     }
     return false;
+}
+
+// Notification System
+export function showNotification(message, type = 'info', duration = 5000) {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+    `;
+
+    // Add to DOM
+    document.body.appendChild(notification);
+
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 100);
+
+    // Auto remove after duration
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, duration);
+}
+
+// Enhanced fetchWithAuth with notifications
+export async function fetchWithAuthAndNotify(url, options = {}, successMessage = null, errorMessage = null, showLoading = true) {
+    const token = getJwtToken();
+    options.headers = options.headers || {};
+    if (token) {
+        options.headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    // Show loading notification
+    if (showLoading) {
+        showNotification('<span class="loading"></span>Processing...', 'info', 60000);
+    }
+
+    try {
+        const response = await fetch(url, options);
+        
+        // Remove loading notification
+        if (showLoading) {
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+        }
+
+        if (response.ok) {
+            if (successMessage) {
+                showNotification(successMessage, 'success');
+            }
+            return response;
+        } else {
+            // Handle different error status codes
+            let message = errorMessage || 'An error occurred';
+            
+            if (response.status === 401) {
+                message = 'Session expired. Please login again.';
+                setTimeout(() => {
+                    localStorage.removeItem('jwtToken');
+                    window.location.href = 'index.html';
+                }, 2000);
+            } else if (response.status === 403) {
+                message = 'Access denied. You don\'t have permission.';
+            } else if (response.status === 404) {
+                message = 'Resource not found.';
+            } else if (response.status === 500) {
+                message = 'Server error. Please try again later.';
+            } else {
+                try {
+                    const errorData = await response.json();
+                    message = errorData.message || errorData.error || message;
+                } catch (e) {
+                    // Use default message if JSON parsing fails
+                }
+            }
+            
+            showNotification(message, 'error');
+            return response;
+        }
+    } catch (error) {
+        // Remove loading notification
+        if (showLoading) {
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+        }
+        
+        showNotification('Network error. Please check your connection.', 'error');
+        throw error;
+    }
+}
+
+// Button loading state helpers
+export function setButtonLoading(button, isLoading = true) {
+    if (isLoading) {
+        button.classList.add('loading');
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+    } else {
+        button.classList.remove('loading');
+        button.disabled = false;
+        if (button.dataset.originalText) {
+            button.textContent = button.dataset.originalText;
+        }
+    }
 }

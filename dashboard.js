@@ -1,9 +1,11 @@
-import { getJwtToken, fetchWithAuth, API_BASE } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify } from './common.js';
 const jwtToken = getJwtToken();
 
-
 if (!jwtToken) {
-    window.location.href = 'index.html';
+    showNotification('Please login to continue.', 'error');
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 2000);
 }
 
 const creditBtn = document.getElementById('creditBtn');
@@ -19,7 +21,10 @@ debitBtn.onclick = () => {
 };
 logoutBtn.onclick = () => {
     localStorage.removeItem('jwtToken');
-    window.location.href = 'index.html';
+    showNotification('Logged out successfully! 👋', 'info');
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 1000);
 };
 
 function showForm(type) {
@@ -34,15 +39,23 @@ function showForm(type) {
         e.preventDefault();
         const amount = document.getElementById(`${type}Amount`).value;
         const desc = document.getElementById(`${type}Desc`).value;
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/${type}?amount=${amount}&description=${desc}`, {
-            method: 'POST'
-        });
-        if (res.ok) {
-            loadTransactions();
-            formSection.innerHTML = '';
-            formSection.style.display = 'none';
-        } else {
-            // Operation failed. You may show a message in the UI here.
+        
+        try {
+            const res = await fetchWithAuthAndNotify(
+                `${API_BASE}/cashbook/${type}?amount=${amount}&description=${desc}`,
+                { method: 'POST' },
+                `${type === 'credit' ? 'Credit' : 'Expense'} of $${amount} added successfully! ${type === 'credit' ? '💰' : '💸'}`,
+                `Failed to add ${type}. Please try again.`
+            );
+            
+            if (res.ok) {
+                loadTransactions();
+                loadBalance();
+                formSection.innerHTML = '';
+                formSection.style.display = 'none';
+            }
+        } catch (error) {
+            showNotification('Network error. Please check your connection.', 'error');
         }
     };
 }
@@ -100,18 +113,25 @@ async function loadTransactions(page = 0, append = false) {
         const tbody = document.querySelector('#transactionsTable tbody');
         if (!tbody.innerHTML.trim()) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td colspan="4" style="text-align:center;color:#888;">No more rows</td>`;
+            tr.innerHTML = `<td colspan="4" style="text-align:center;color:#888;">Failed to load transactions</td>`;
             tbody.appendChild(tr);
         }
+        showNotification('Failed to load transactions. Please try again.', 'error');
     }
     loading = false;
 }
 
 async function loadBalance() {
-    const res = await fetchWithAuth(`${API_BASE}/cashbook/balance`);
-    if (res.ok) {
-        const balance = await res.json();
-        document.getElementById('balanceDisplay').innerHTML = `Balance: <span style="color:#2e7d32;">${balance}</span>`;
+    try {
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/balance`);
+        if (res.ok) {
+            const balance = await res.json();
+            document.getElementById('balanceDisplay').innerHTML = `Balance: <span style="color:#2e7d32;">${balance}</span>`;
+        } else {
+            showNotification('Failed to load balance.', 'error');
+        }
+    } catch (error) {
+        showNotification('Network error while loading balance.', 'error');
     }
 }
 

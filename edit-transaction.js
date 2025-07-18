@@ -1,9 +1,11 @@
-import { fetchWithAuth, API_BASE } from './common.js';
+import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading } from './common.js';
 const transactionId = new URLSearchParams(window.location.search).get('id');
 
 if (!transactionId) {
-    // Transaction ID is missing. You may show a message in the UI here.
-    window.location.href = 'dashboard.html';
+    showNotification('Transaction ID is missing.', 'error');
+    setTimeout(() => {
+        window.location.href = 'dashboard.html';
+    }, 2000);
 }
 
 const editAmount = document.getElementById('editAmount');
@@ -12,49 +14,73 @@ const editType = document.getElementById('editType');
 const editTransactionForm = document.getElementById('editTransactionForm');
 
 async function loadTransactionDetails() {
-    const res = await fetchWithAuth(`${API_BASE}/cashbook/transaction/${transactionId}`);
-    if (res.ok) {
-        const transaction = await res.json();
-        editAmount.value = transaction.amount;
-        editDescription.value = transaction.description;
+    try {
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/transaction/${transactionId}`);
+        if (res.ok) {
+            const transaction = await res.json();
+            editAmount.value = transaction.amount;
+            editDescription.value = transaction.description;
 
-        // Populate dropdown with transaction types
-        const transactionTypes = ['Credit', 'Debit'];
-        editType.innerHTML = transactionTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+            // Populate dropdown with transaction types
+            const transactionTypes = ['Credit', 'Debit'];
+            editType.innerHTML = transactionTypes.map(type => `<option value="${type}">${type}</option>`).join('');
 
-        // Set the selected value
-        const options = Array.from(editType.options);
-        const matchingOption = options.find(option => option.value === transaction.type);
-        if (matchingOption) {
-            matchingOption.selected = true;
+            // Set the selected value
+            const options = Array.from(editType.options);
+            const matchingOption = options.find(option => option.value === transaction.type);
+            if (matchingOption) {
+                matchingOption.selected = true;
+            } else {
+                console.error(`No matching option found for transaction type: ${transaction.type}`);
+            }
         } else {
-            console.error(`No matching option found for transaction type: ${transaction.type}`);
+            showNotification('Failed to load transaction details.', 'error');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 2000);
         }
-    } else {
-        // Failed to load transaction details. You may show a message in the UI here.
-        window.location.href = 'dashboard.html';
+    } catch (error) {
+        showNotification('Network error while loading transaction.', 'error');
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 2000);
     }
 }
 
 editTransactionForm.onsubmit = async (e) => {
     e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitButton, true);
+    
     const updatedTransaction = {
         amount: editAmount.value,
         description: editDescription.value,
         type: editType.value
     };
-    const res = await fetchWithAuth(`${API_BASE}/cashbook/transaction/${transactionId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTransaction)
-    });
-    if (res.ok) {
-        // Transaction updated successfully. You may show a message in the UI here.
-        window.location.href = 'dashboard.html';
-    } else {
-        // Failed to update transaction. You may show a message in the UI here.
+    
+    try {
+        const res = await fetchWithAuthAndNotify(
+            `${API_BASE}/cashbook/transaction/${transactionId}`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedTransaction)
+            },
+            'Transaction updated successfully! ✅',
+            'Failed to update transaction. Please try again.'
+        );
+        
+        if (res.ok) {
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+    } catch (error) {
+        showNotification('Network error. Please check your connection.', 'error');
+    } finally {
+        setButtonLoading(submitButton, false);
     }
 };
-
 
 loadTransactionDetails();

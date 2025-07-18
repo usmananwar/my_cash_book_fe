@@ -1,24 +1,42 @@
 // debit.js
-import { getJwtToken, fetchWithAuth, handleAuthRedirect, API_BASE } from './common.js';
+import { getJwtToken, fetchWithAuthAndNotify, handleAuthRedirect, API_BASE, showNotification, setButtonLoading } from './common.js';
 const jwtToken = getJwtToken();
 
 if (!jwtToken) {
-    window.location.href = 'index.html';
+    showNotification('Please login to continue.', 'error');
+    setTimeout(() => {
+        window.location.href = 'index.html';
+    }, 2000);
 }
 
 const debitForm = document.getElementById('debitForm');
 debitForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitButton, true);
+    
     const amount = document.getElementById('debitAmount').value;
     const desc = document.getElementById('debitDesc').value;
-    const res = await fetchWithAuth(`${API_BASE}/cashbook/debit?amount=${amount}&description=${desc}`, {
-        method: 'POST'
-    });
-    if (await handleAuthRedirect(res)) return;
-    if (res.ok) {
-        // Debit entry added! You may show a message in the UI here.
-        window.location.href = 'dashboard.html';
-    } else {
-        // Debit failed. You may show a message in the UI here.
+    
+    try {
+        const res = await fetchWithAuthAndNotify(
+            `${API_BASE}/cashbook/debit?amount=${amount}&description=${desc}`,
+            { method: 'POST' },
+            `Expense of $${amount} added successfully! 💸`,
+            'Failed to add expense. Please try again.'
+        );
+        
+        if (await handleAuthRedirect(res)) return;
+        
+        if (res.ok) {
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+    } catch (error) {
+        showNotification('Network error. Please check your connection.', 'error');
+    } finally {
+        setButtonLoading(submitButton, false);
     }
 });

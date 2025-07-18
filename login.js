@@ -1,36 +1,53 @@
-import { API_BASE } from './common.js';
+import { API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading } from './common.js';
 
 const loginForm = document.getElementById('loginForm');
-// Helper to get JWT token from localStorage
-function getJwtToken() {
-    return localStorage.getItem('jwtToken');
-}
 
-// Helper to make authenticated requests
-async function fetchWithAuth(url, options = {}) {
-    const token = getJwtToken();
-    options.headers = options.headers || {};
-    if (token) {
-        options.headers['Authorization'] = 'Bearer ' + token;
-    }
-    return fetch(url, options);
-}
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitButton, true);
+    
     const user = {
         email: document.getElementById('loginEmail').value,
         password: document.getElementById('loginPassword').value
     };
-    const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
-    });
-    if (res.ok) {
-        const data = await res.json();
-        localStorage.setItem('jwtToken', data.token || data.jwt || data);
-        window.location.href = 'dashboard.html';
-    } else {
-        // Login failed. You may show a message in the UI here.
+    
+    try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            localStorage.setItem('jwtToken', data.token || data.jwt || data);
+            showNotification('Login successful! Welcome back! 🎉', 'success');
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        } else {
+            let errorMessage = 'Login failed. Please check your credentials.';
+            
+            if (res.status === 401) {
+                errorMessage = 'Invalid email or password.';
+            } else if (res.status === 429) {
+                errorMessage = 'Too many login attempts. Please try again later.';
+            } else {
+                try {
+                    const errorData = await res.json();
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (e) {
+                    // Use default message
+                }
+            }
+            
+            showNotification(errorMessage, 'error');
+        }
+    } catch (error) {
+        showNotification('Network error. Please check your connection.', 'error');
+    } finally {
+        setButtonLoading(submitButton, false);
     }
 });
