@@ -137,7 +137,7 @@ a:hover {
 #transactionsTable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 1px;
     margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
