@@ -42,7 +42,7 @@ function showForm(type) {
                 formSection.style.display = 'none';
             }
         } catch (error) {
-            colnsole.error('Error getting transaction details:', error);
+            console.error('Error getting transaction details:', error);
             showNotification('Network error. Please check your connection.', 'error');
         }
     };
@@ -119,7 +119,7 @@ async function loadBalance() {
             showNotification('Failed to load balance.', 'error');
         }
     } catch (error) {
-        colnsole.error('Error getting balance:', error);
+        console.error('Error getting balance:', error);
         showNotification('Network error while loading balance.', 'error');
     }
 }

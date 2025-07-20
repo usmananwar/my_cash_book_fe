@@ -26,7 +26,7 @@ debitForm.addEventListener('submit', async (e) => {
             navigate('dashboard.html', 1500);
         }
     } catch (error) {
-        colnsole.error('Error adding debit:', error);
+        console.error('Error adding debit:', error);
         showNotification('Network error. Please check your connection.', 'error');
     } finally {
         setButtonLoading(submitButton, false);

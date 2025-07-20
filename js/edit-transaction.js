@@ -105,7 +105,7 @@ if (deleteBtn && deleteModal && confirmDeleteBtn && cancelDeleteBtn) {
                 navigate('dashboard.html', 1500);
             }
         } catch (error) {
-            colnsole.error('Error deleting transaction:', error);
+            console.error('Error deleting transaction:', error);
             showNotification('Network error. Please check your connection.', 'error');
         } finally {
             setButtonLoading(confirmDeleteBtn, false);

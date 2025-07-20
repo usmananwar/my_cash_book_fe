@@ -149,7 +149,7 @@ export async function fetchWithAuthAndNotify(url, options = {}, successMessage =
             return response;
         }
     } catch (error) {
-        colnsole.error(error);
+        console.error(error);
         // Remove loading notification
         if (showLoading) {
             document.querySelectorAll('.notification').forEach(n => n.remove());

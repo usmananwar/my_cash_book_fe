@@ -43,7 +43,7 @@ registerForm.addEventListener('submit', async (e) => {
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
-        colnsole.error('Error registring user:', error);
+        console.error('Error registring user:', error);
         showNotification('Network error. Please check your connection.', 'error');
     } finally {
         setButtonLoading(submitButton, false);

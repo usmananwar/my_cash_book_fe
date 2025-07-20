@@ -44,7 +44,7 @@ loginForm.addEventListener('submit', async (e) => {
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
-        colnsole.error('Error trying to login:', error);
+        console.error('Error trying to login:', error);
         showNotification('Network error. Please check your connection.', 'error');
     } finally {
         setButtonLoading(submitButton, false);
