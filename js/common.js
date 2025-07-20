@@ -3,10 +3,10 @@ export function navigate(page, delay = 0) {
     const path = page.startsWith('/') ? page : `/html/${page}`;
     if (delay > 0) {
         setTimeout(() => {
-            window.location.href = path;
+            window.location.href = `/my_cash_book_fe/${path}`;
         }, delay);
     } else {
-        window.location.href = path;
+        window.location.href = `/my_cash_book_fe/${path}`;
     }
 }
 // Check JWT token and redirect to login if missing
