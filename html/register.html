@@ -7,11 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js').then(() => {
+        navigator.serviceWorker.register('../service-worker.js').then(() => {
           console.log('Service Worker Registered');
         });
       }
@@ -29,6 +29,6 @@
         </form>
         <p>Already have an account? <a href="index.html">Sign in here</a></p>
     </div>
-    <script type="module" src="register.js"></script>
+    <script type="module" src="../js/register.js"></script>
 </body>
 </html>

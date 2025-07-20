@@ -7,11 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js').then(() => {
+        navigator.serviceWorker.register('../service-worker.js').then(() => {
           console.log('Service Worker Registered');
         });
       }
@@ -27,6 +27,6 @@
         </form>
         <button onclick="window.location.href='dashboard.html'">← Back to Dashboard</button>
     </div>
-    <script type="module" src="debit.js"></script>
+    <script type="module" src="../js/debit.js"></script>
 </body>
 </html>

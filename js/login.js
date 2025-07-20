@@ -25,7 +25,7 @@ loginForm.addEventListener('submit', async (e) => {
             localStorage.setItem('jwtToken', data.token || data.jwt || data);
             showNotification('Login successful! Welcome back! 🎉', 'success');
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'html/dashboard.html';
             }, 1500);
         } else {
             let errorMessage = 'Login failed. Please check your credentials.';
