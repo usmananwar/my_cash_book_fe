@@ -409,7 +409,7 @@ button.loading::after {
     }
     
     .actions {
-        flex-direction: column;
+        /*flex-direction: column;*/
     }
     
     .dashboard-table-container {
