@@ -22,9 +22,7 @@ creditForm.addEventListener('submit', async (e) => {
         if (await handleAuthRedirect(res)) return;
         
         if (res.ok) {
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1500);
+            navigate('dashboard.html', 1500);
         }
     } catch (error) {
         showNotification('Network error. Please check your connection.', 'error');
