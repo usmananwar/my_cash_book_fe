@@ -413,7 +413,7 @@ button.loading::after {
     }
     
     .dashboard-table-container {
-        max-height: 200px;
+        max-height: 550px;
     }
     
     .dashboard-table th, .dashboard-table td {
