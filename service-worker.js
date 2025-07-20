@@ -4,14 +4,23 @@ self.addEventListener('install', event => {
       return cache.addAll([
         '/',
         '/index.html',
-        '/style.css',
+        '/register.html',
+        '/edit-transaction.html',
         '/dashboard.html',
-        '/dashboard.js',
         '/credit.html',
-        '/credit.js',
         '/debit.html',
+        '/style.css',
+        '/dashboard.js',
+        '/credit.js',
         '/debit.js',
-        '/common.js'
+        '/edit-transaction.js',
+        '/register.js',
+        '/login.js',
+        '/common.js',
+        '/favicon.ico',
+        '/manifest.json',
+        '/icon-192x192.png',
+        '/icon-512x512.png'
       ]);
     })
   );
