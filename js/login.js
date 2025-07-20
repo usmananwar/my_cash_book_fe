@@ -1,4 +1,4 @@
-import { API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading } from './common.js';
+import { API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate } from './common.js';
 
 const loginForm = document.getElementById('loginForm');
 
