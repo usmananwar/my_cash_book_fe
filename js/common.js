@@ -1,6 +1,15 @@
 // Navigation helper
+// Dynamic base path for local and GitHub Pages
+const BASE_PATH = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : '/my_cash_book_fe';
 export function navigate(page, delay = 0) {
-    const path = page.startsWith('/') ? page : `/html/${page}`;
+    let path;
+    if (page.startsWith('/')) {
+        path = `${BASE_PATH}${page}`;
+    } else {
+        path = `${BASE_PATH}/html/${page}`;
+    }
     if (delay > 0) {
         setTimeout(() => {
             window.location.href = path;
