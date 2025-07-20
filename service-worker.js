@@ -3,7 +3,7 @@ self.addEventListener('install', event => {
     caches.open('my-cash-book-cache').then(cache => {
       return cache.addAll([
         '/',
-        '/html/index.html',
+        '/index.html',
         '/html/register.html',
         '/html/edit-transaction.html',
         '/html/dashboard.html',
