@@ -84,3 +84,31 @@ editTransactionForm.onsubmit = async (e) => {
 };
 
 loadTransactionDetails();
+// Delete Transaction logic
+const deleteBtn = document.getElementById('deleteTransactionBtn');
+if (deleteBtn) {
+    deleteBtn.onclick = async () => {
+        if (confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
+            setButtonLoading(deleteBtn, true);
+            try {
+                const res = await fetchWithAuthAndNotify(
+                    `${API_BASE}/cashbook/transaction/${transactionId}`,
+                    {
+                        method: 'DELETE',
+                    },
+                    'Transaction deleted successfully! ✅',
+                    'Failed to delete transaction. Please try again.'
+                );
+                if (res.ok) {
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }
+            } catch (error) {
+                showNotification('Network error. Please check your connection.', 'error');
+            } finally {
+                setButtonLoading(deleteBtn, false);
+            }
+        }
+    };
+}
