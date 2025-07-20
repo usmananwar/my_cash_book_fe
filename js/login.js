@@ -24,7 +24,7 @@ loginForm.addEventListener('submit', async (e) => {
             const data = await res.json();
             localStorage.setItem('jwtToken', data.token || data.jwt || data);
             showNotification('Login successful! Welcome back! 🎉', 'success');
-            navigate('dashboard.html');
+            navigate('cashbooks.html');
         } else {
             let errorMessage = 'Login failed. Please check your credentials.';
             

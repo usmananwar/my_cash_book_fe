@@ -40,7 +40,7 @@ A Progressive Web App (PWA) for tracking personal finances - credits and debits.
 
 1. **Push your code to GitHub**
 2. **Connect to Render:**
-   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Go to [Render Cashbook](https://cashbook.render.com/)
    - Click "New" → "Web Service"
    - Connect your GitHub repository
    - Render will automatically detect the `render.yaml` file
@@ -98,7 +98,7 @@ The app includes a service worker for offline functionality. It's automatically 
 ```
 ├── index.html          # Login page
 ├── register.html       # Registration page
-├── dashboard.html      # Main dashboard
+├── cashbook.html      # Main cashbook
 ├── credit.html         # Add credit transactions
 ├── debit.html          # Add debit transactions
 ├── edit-transaction.html # Edit existing transactions

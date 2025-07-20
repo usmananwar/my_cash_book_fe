@@ -23,7 +23,7 @@ debitForm.addEventListener('submit', async (e) => {
         if (await handleAuthRedirect(res)) return;
         
         if (res.ok) {
-            navigate('dashboard.html', 1500);
+            navigate('cashbook.html', 1500);
         }
     } catch (error) {
         console.error('Error adding debit:', error);

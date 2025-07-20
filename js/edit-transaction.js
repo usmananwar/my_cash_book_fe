@@ -3,7 +3,7 @@ const transactionId = new URLSearchParams(window.location.search).get('id');
 
 if (!transactionId) {
     showNotification('Transaction ID is missing.', 'error');
-    navigate('dashboard.html', 2000);
+    navigate('cashbook.html', 2000);
 }
 
 const editAmount = document.getElementById('editAmount');
@@ -33,11 +33,11 @@ async function loadTransactionDetails() {
             }
         } else {
             showNotification('Failed to load transaction details.', 'error');
-            navigate('dashboard.html', 2000);
+            navigate('cashbook.html', 2000);
         }
     } catch (error) {
         showNotification('Network error while loading transaction.', 'error');
-        navigate('dashboard.html', 2000);
+        navigate('cashbook.html', 2000);
     }
 }
 
@@ -66,7 +66,7 @@ editTransactionForm.onsubmit = async (e) => {
         );
         
         if (res.ok) {
-            navigate('dashboard.html', 1500);
+            navigate('cashbook.html', 1500);
         }
     } catch (error) {
         showNotification('Network error. Please check your connection.', 'error');
@@ -102,7 +102,7 @@ if (deleteBtn && deleteModal && confirmDeleteBtn && cancelDeleteBtn) {
             );
             if (res.ok) {
                 deleteModal.style.display = 'none';
-                navigate('dashboard.html', 1500);
+                navigate('cashbook.html', 1500);
             }
         } catch (error) {
             console.error('Error deleting transaction:', error);

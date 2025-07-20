@@ -1,5 +1,12 @@
 import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate } from './common.js';
+
 requireLogin();
+const selectedCashbookId = localStorage.getItem('selectedCashbookId');
+if (!selectedCashbookId) {
+    showNotification('No cashbook selected. Please select a cashbook.', 'error');
+    setTimeout(() => navigate('cashbooks.html'), 1500);
+    throw new Error('No cashbook selected');
+}
 
 const creditBtn = document.getElementById('creditBtn');
 const debitBtn = document.getElementById('debitBtn');
@@ -14,6 +21,7 @@ debitBtn.onclick = () => {
 };
 logoutBtn.onclick = logoutAndRedirect;
 
+
 function showForm(type) {
     formSection.innerHTML = `
         <form id="${type}Form">
@@ -26,15 +34,13 @@ function showForm(type) {
         e.preventDefault();
         const amount = document.getElementById(`${type}Amount`).value;
         const desc = document.getElementById(`${type}Desc`).value;
-        
         try {
             const res = await fetchWithAuthAndNotify(
-                `${API_BASE}/cashbook/${type}?amount=${amount}&description=${desc}`,
+                `${API_BASE}/cashbook/${selectedCashbookId}/${type}?amount=${amount}&description=${desc}`,
                 { method: 'POST' },
                 `${type === 'credit' ? 'Credit' : 'Expense'} of $${amount} added successfully! ${type === 'credit' ? '💰' : '💸'}`,
                 `Failed to add ${type}. Please try again.`
             );
-            
             if (res.ok) {
                 loadTransactions();
                 loadBalance();
@@ -58,7 +64,7 @@ let hasMore = true;
 async function loadTransactions(page = 0, append = false) {
     if (loading || !hasMore) return;
     loading = true;
-    const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?page=${page}&size=${pageSize}`);
+    const res = await fetchWithAuth(`${API_BASE}/cashbook/${selectedCashbookId}/transactions?page=${page}&size=${pageSize}`);
     if (res.ok) {
         const data = await res.json();
         // If backend returns a Page object, use content; else fallback to array
@@ -97,7 +103,6 @@ async function loadTransactions(page = 0, append = false) {
         if (hasMore) currentPage++;
     } else {
         hasMore = false;
-        // Show 'No more rows' if fetch fails and table is empty
         const tbody = document.querySelector('#transactionsTable tbody');
         if (!tbody.innerHTML.trim()) {
             const tr = document.createElement('tr');
@@ -109,9 +114,10 @@ async function loadTransactions(page = 0, append = false) {
     loading = false;
 }
 
+
 async function loadBalance() {
     try {
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/balance`);
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/${selectedCashbookId}/balance`);
         if (res.ok) {
             const balance = await res.json();
             document.getElementById('balanceDisplay').innerHTML = `Balance: <span style="color:#2e7d32;">${balance}</span>`;
@@ -123,7 +129,6 @@ async function loadBalance() {
         showNotification('Network error while loading balance.', 'error');
     }
 }
-
 
 loadBalance();
 loadTransactions();

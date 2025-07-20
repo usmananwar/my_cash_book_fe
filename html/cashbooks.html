@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cashbooks</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Cashbooks</h1>
+        <div id="cashbook-list" class="card-list"></div>
+        
+    </div>
+    <div id="add-cashbook-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2>Add New Cashbook</h2>
+            <form id="add-cashbook-form">
+                <input type="text" id="cashbook-name" placeholder="Cashbook Name" required />
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+    <script type="module" src="../js/cashbooks.js"></script>
+</body>
+</html>
