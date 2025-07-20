@@ -1,13 +1,6 @@
 // debit.js
-import { getJwtToken, fetchWithAuthAndNotify, handleAuthRedirect, API_BASE, showNotification, setButtonLoading } from './common.js';
-const jwtToken = getJwtToken();
-
-if (!jwtToken) {
-    showNotification('Please login to continue.', 'error');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 2000);
-}
+import { getJwtToken, fetchWithAuthAndNotify, handleAuthRedirect, API_BASE, showNotification, setButtonLoading, requireLogin, navigate } from './common.js';
+requireLogin();
 
 const debitForm = document.getElementById('debitForm');
 debitForm.addEventListener('submit', async (e) => {
@@ -30,11 +23,10 @@ debitForm.addEventListener('submit', async (e) => {
         if (await handleAuthRedirect(res)) return;
         
         if (res.ok) {
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 1500);
+            navigate('dashboard.html', 1500);
         }
     } catch (error) {
+        colnsole.error('Error adding debit:', error);
         showNotification('Network error. Please check your connection.', 'error');
     } finally {
         setButtonLoading(submitButton, false);

@@ -1,3 +1,34 @@
+// Navigation helper
+export function navigate(page, delay = 0) {
+    const path = page.startsWith('/') ? page : `/html/${page}`;
+    if (delay > 0) {
+        setTimeout(() => {
+            window.location.href = path;
+        }, delay);
+    } else {
+        window.location.href = path;
+    }
+}
+// Check JWT token and redirect to login if missing
+export function requireLogin() {
+    const jwtToken = getJwtToken();
+    if (!jwtToken) {
+        showNotification('Please login to continue.', 'error');
+        setTimeout(() => {
+            navigate('/');
+        }, 2000);
+        return false;
+    }
+    return true;
+}
+// Logout helper function
+export function logoutAndRedirect() {
+    localStorage.removeItem('jwtToken');
+    showNotification('Logged out successfully! 👋', 'info');
+    setTimeout(() => {
+        navigate('/');
+    }, 1000);
+}
 // API Base URL - automatically detects environment
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const isDevelopment = isLocalhost || window.location.hostname.includes('localhost');
@@ -30,7 +61,7 @@ export async function fetchWithAuth(url, options = {}) {
 export async function handleAuthRedirect(res) {
     if (res.status === 401) {
         // Login session expired. You may show a message in the UI here.
-        window.location.href = 'index.html';
+        navigate('index.html');
         return true;
     }
     return false;
@@ -97,7 +128,7 @@ export async function fetchWithAuthAndNotify(url, options = {}, successMessage =
                 message = 'Session expired. Please login again.';
                 setTimeout(() => {
                     localStorage.removeItem('jwtToken');
-                    window.location.href = 'index.html';
+                    navigate('index.html');
                 }, 2000);
             } else if (response.status === 403) {
                 message = 'Access denied. You don\'t have permission.';
@@ -118,6 +149,7 @@ export async function fetchWithAuthAndNotify(url, options = {}, successMessage =
             return response;
         }
     } catch (error) {
+        colnsole.error(error);
         // Remove loading notification
         if (showLoading) {
             document.querySelectorAll('.notification').forEach(n => n.remove());

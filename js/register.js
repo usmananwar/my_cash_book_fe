@@ -1,4 +1,4 @@
-import { API_BASE, showNotification, setButtonLoading } from './common.js';
+import { API_BASE, showNotification, setButtonLoading, navigate } from './common.js';
 
 const registerForm = document.getElementById('registerForm');
 registerForm.addEventListener('submit', async (e) => {
@@ -23,9 +23,7 @@ registerForm.addEventListener('submit', async (e) => {
         
         if (res.ok) {
             showNotification('Registration successful! Please login to continue. 🎉', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            navigate('/', 2000);
         } else {
             let errorMessage = 'Registration failed. Please try again.';
             
@@ -45,6 +43,7 @@ registerForm.addEventListener('submit', async (e) => {
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
+        colnsole.error('Error registring user:', error);
         showNotification('Network error. Please check your connection.', 'error');
     } finally {
         setButtonLoading(submitButton, false);

@@ -1,12 +1,5 @@
-import { getJwtToken, fetchWithAuthAndNotify, handleAuthRedirect, API_BASE, showNotification, setButtonLoading } from './common.js';
-const jwtToken = getJwtToken();
-
-if (!jwtToken) {
-    showNotification('Please login to continue.', 'error');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 2000);
-}
+import { getJwtToken, fetchWithAuthAndNotify, handleAuthRedirect, API_BASE, showNotification, setButtonLoading, requireLogin, navigate } from './common.js';
+requireLogin();
 
 const creditForm = document.getElementById('creditForm');
 creditForm.addEventListener('submit', async (e) => {

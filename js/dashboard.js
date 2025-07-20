@@ -1,12 +1,5 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify } from './common.js';
-const jwtToken = getJwtToken();
-
-if (!jwtToken) {
-    showNotification('Please login to continue.', 'error');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 2000);
-}
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate } from './common.js';
+requireLogin();
 
 const creditBtn = document.getElementById('creditBtn');
 const debitBtn = document.getElementById('debitBtn');
@@ -14,18 +7,12 @@ const formSection = document.getElementById('formSection');
 const logoutBtn = document.getElementById('logoutBtn');
 
 creditBtn.onclick = () => {
-    window.location.href = 'credit.html';
+    navigate('credit.html');
 };
 debitBtn.onclick = () => {
-    window.location.href = 'debit.html';
+    navigate('debit.html');
 };
-logoutBtn.onclick = () => {
-    localStorage.removeItem('jwtToken');
-    showNotification('Logged out successfully! 👋', 'info');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1000);
-};
+logoutBtn.onclick = logoutAndRedirect;
 
 function showForm(type) {
     formSection.innerHTML = `
@@ -55,6 +42,7 @@ function showForm(type) {
                 formSection.style.display = 'none';
             }
         } catch (error) {
+            colnsole.error('Error getting transaction details:', error);
             showNotification('Network error. Please check your connection.', 'error');
         }
     };
@@ -131,6 +119,7 @@ async function loadBalance() {
             showNotification('Failed to load balance.', 'error');
         }
     } catch (error) {
+        colnsole.error('Error getting balance:', error);
         showNotification('Network error while loading balance.', 'error');
     }
 }

@@ -1,11 +1,9 @@
-import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading } from './common.js';
+import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate } from './common.js';
 const transactionId = new URLSearchParams(window.location.search).get('id');
 
 if (!transactionId) {
     showNotification('Transaction ID is missing.', 'error');
-    setTimeout(() => {
-        window.location.href = 'html/dashboard.html';
-    }, 2000);
+    navigate('dashboard.html', 2000);
 }
 
 const editAmount = document.getElementById('editAmount');
@@ -35,15 +33,11 @@ async function loadTransactionDetails() {
             }
         } else {
             showNotification('Failed to load transaction details.', 'error');
-            setTimeout(() => {
-                window.location.href = 'html/dashboard.html';
-            }, 2000);
+            navigate('dashboard.html', 2000);
         }
     } catch (error) {
         showNotification('Network error while loading transaction.', 'error');
-        setTimeout(() => {
-            window.location.href = 'html/dashboard.html';
-        }, 2000);
+        navigate('dashboard.html', 2000);
     }
 }
 
@@ -72,9 +66,7 @@ editTransactionForm.onsubmit = async (e) => {
         );
         
         if (res.ok) {
-            setTimeout(() => {
-                window.location.href = 'html/dashboard.html';
-            }, 1500);
+            navigate('dashboard.html', 1500);
         }
     } catch (error) {
         showNotification('Network error. Please check your connection.', 'error');
@@ -110,11 +102,10 @@ if (deleteBtn && deleteModal && confirmDeleteBtn && cancelDeleteBtn) {
             );
             if (res.ok) {
                 deleteModal.style.display = 'none';
-                setTimeout(() => {
-                    window.location.href = 'html/dashboard.html';
-                }, 1500);
+                navigate('dashboard.html', 1500);
             }
         } catch (error) {
+            colnsole.error('Error deleting transaction:', error);
             showNotification('Network error. Please check your connection.', 'error');
         } finally {
             setButtonLoading(confirmDeleteBtn, false);
