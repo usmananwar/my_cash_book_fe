@@ -405,7 +405,7 @@ button.loading::after {
     }
     
     h1 {
-        font-size: 1.8em;
+        font-size: 1.5em;
     }
     
     .actions {
@@ -413,12 +413,19 @@ button.loading::after {
     }
     
     .dashboard-table-container {
-        max-height: 550px;
+        max-height: 350px;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
     }
     
     .dashboard-table th, .dashboard-table td {
         padding: 8px 4px;
-        font-size: 12px;
+        font-size: 14px;
+        min-width: 80px;
+    }
+    #transactionsTable th, #transactionsTable td {
+        font-size: 14px;
+        min-width: 80px;
     }
 }
 
