@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Cashbook - My Cashbook</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('../service-worker.js').then(() => {
+          console.log('Service Worker Registered');
+        });
+      }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section">
+            <div class="app-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <h1>Create New Cashbook</h1>
+            <p class="tagline">Start tracking your finances with a new cashbook</p>
+        </div>
+        
+        <form id="createCashbookForm">
+            <div class="input-group">
+                <i class="fas fa-book input-icon"></i>
+                <input type="text" id="cashbookName" placeholder="Enter cashbook name" required maxlength="50">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-align-left input-icon"></i>
+                <input type="text" id="cashbookDescription" placeholder="Description (optional)" maxlength="100">
+            </div>
+            <button type="submit" id="createBtn">
+                <i class="fas fa-plus"></i>
+                Create Cashbook
+            </button>
+        </form>
+        
+        <div class="back-link">
+            <p><a href="dashboard.html"><i class="fas fa-arrow-left"></i> Back to Dashboard</a></p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-piggy-bank"></i>
+                <span>Track Income</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-receipt"></i>
+                <span>Track Expenses</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-chart-pie"></i>
+                <span>View Reports</span>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/create-cashbook.js"></script>
+</body>
+</html>

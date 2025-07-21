@@ -3,10 +3,9 @@ requireLogin();
 
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');
-const cashbooksBtn = document.getElementById('cashbooksBtn');
-const createCashbookBtn = document.getElementById('createCashbookBtn');
 const quickIncomeBtn = document.getElementById('quickIncomeBtn');
 const quickExpenseBtn = document.getElementById('quickExpenseBtn');
+const quickTransferBtn = document.getElementById('quickTransferBtn');
 const fabBtn = document.getElementById('fabBtn');
 const quickAddSection = document.getElementById('quickAddSection');
 const closeFormBtn = document.getElementById('closeFormBtn');
@@ -56,15 +55,10 @@ function setupEventListeners() {
     // Logout
     logoutBtn.onclick = logoutAndRedirect;
     
-    // Navigation
-    cashbooksBtn.onclick = () => navigate('cashbooks.html');
-    
-    // Create Cashbook
-    createCashbookBtn.onclick = () => navigate('create-cashbook.html');
-    
     // Quick action buttons
     quickIncomeBtn.onclick = () => showQuickAddForm('credit');
     quickExpenseBtn.onclick = () => showQuickAddForm('debit');
+    quickTransferBtn.onclick = () => navigate('credit.html'); // For now, redirect to credit page
     
     // FAB - show expense form by default
     fabBtn.onclick = () => showQuickAddForm('debit');
@@ -303,14 +297,9 @@ function loadMoreTransactions() {
 }
 
 function createTransactionElement(tx) {
-    const isIncome = tx.type === 'Credit';
+    const isIncome = tx.type === 'credit';
     const amount = parseFloat(tx.amount);
     
-    // Get balance after transaction
-    const balanceAfter = tx.balanceAfter || 0;
-    const formattedBalance = `$${parseFloat(balanceAfter).toFixed(2)}`;
-    
-    // Format the transaction date
     let timestamp = tx.timestamp || tx.createdDate || '';
     let formattedDate = '';
     if (timestamp) {
@@ -329,20 +318,19 @@ function createTransactionElement(tx) {
     element.className = 'transaction-item';
     element.innerHTML = `
         <div class="transaction-left">
-            <div class="transaction-icon ${isIncome ? 'Credit' : 'Debit'}">
+            <div class="transaction-icon ${isIncome ? 'income' : 'expense'}">
                 <i class="fas ${isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
             </div>
             <div class="transaction-details">
                 <h4>${tx.description}</h4>
                 <p>${getCategoryName(tx.category || 'general')}</p>
-                <p class="transaction-date-small">${formattedDate}</p>
             </div>
         </div>
         <div class="transaction-right">
             <div class="transaction-amount ${isIncome ? 'income' : 'expense'}">
-                $${amount.toFixed(2)}
+                ${isIncome ? '+' : '-'}$${amount.toFixed(2)}
             </div>
-            <div class="transaction-date">${formattedBalance}</div>
+            <div class="transaction-date">${formattedDate}</div>
         </div>
     `;
     
