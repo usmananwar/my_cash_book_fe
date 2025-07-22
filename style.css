@@ -766,7 +766,8 @@ a:hover {
 
 @media (max-width: 480px) {
     .cashbook-list-item {
-        padding: 16px;
+        padding: 11px;
+        margin: 5px;
     }
     
     .cashbook-list-icon {

@@ -330,7 +330,7 @@ function createTransactionElement(tx) {
     element.innerHTML = `
         <div class="transaction-left">
             <div class="transaction-icon ${isIncome ? 'Credit' : 'Debit'}">
-                <i class="fas ${isIncome ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                <i class="fas ${isIncome ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
             </div>
             <div class="transaction-details">
                 <h4>${tx.description}</h4>
