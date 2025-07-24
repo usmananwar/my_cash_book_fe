@@ -39,7 +39,7 @@
 
     <!-- Quick Create Section -->
     <section class="quick-create-section">
-        <div class="quick-create-card">
+        <div class="quick-create-card" style="display: none;">
             <div class="create-icon">
                 <i class="fas fa-plus"></i>
             </div>
@@ -130,6 +130,30 @@
                     Create Cashbook
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Delete Cashbook Confirmation Modal -->
+    <div id="deleteCashbookModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Delete Cashbook</h3>
+                <button id="closeDeletModalBtn" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this cashbook? This action cannot be undone.</p>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmDeleteCashbookBtn" class="btn-danger">
+                    <i class="fas fa-trash"></i>
+                    Yes
+                </button>
+                <button id="cancelDeleteCashbookBtn" class="btn-secondary">
+                    Cancel
+                </button>
+            </div>
         </div>
     </div>
 

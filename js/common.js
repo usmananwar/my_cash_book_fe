@@ -1,3 +1,17 @@
+// Utility: Format date and time for cashbook updatedDate
+export function formatDateWithTime(dateString) {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+}
 // Navigation helper
 // Dynamic base path for local and GitHub Pages
 const BASE_PATH = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')

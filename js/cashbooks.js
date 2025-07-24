@@ -1,4 +1,4 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime } from './common.js';
 requireLogin();
 
 // DOM Elements
@@ -19,10 +19,16 @@ const loadingState = document.getElementById('loadingState');
 const emptyState = document.getElementById('emptyState');
 const cashbooksGrid = document.getElementById('cashbooksGrid');
 const cashbooksList = document.getElementById('cashbooksList');
+const deleteCashbookModal = document.getElementById('deleteCashbookModal');
+const closeDeletModalBtn = document.getElementById('closeDeletModalBtn');
+const confirmDeleteCashbookBtn = document.getElementById('confirmDeleteCashbookBtn');
+const cancelDeleteCashbookBtn = document.getElementById('cancelDeleteCashbookBtn');
 
 // State
 let currentView = 'grid';
 let cashbooks = [];
+let cashbookToDelete = null;
+let cashbookToEdit = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -48,6 +54,16 @@ function setupEventListeners() {
     createCashbookModal.onclick = (e) => {
         if (e.target === createCashbookModal) {
             hideCreateForm();
+        }
+    };
+    
+    // Delete modal controls
+    closeDeletModalBtn.onclick = hideDeleteModal;
+    cancelDeleteCashbookBtn.onclick = hideDeleteModal;
+    confirmDeleteCashbookBtn.onclick = confirmDeleteCashbook;
+    deleteCashbookModal.onclick = (e) => {
+        if (e.target === deleteCashbookModal) {
+            hideDeleteModal();
         }
     };
     
@@ -77,13 +93,45 @@ function setView(view) {
 }
 
 function showCreateForm() {
+    cashbookToEdit = null; // Clear edit mode
     createCashbookModal.style.display = 'flex';
     cashbookNameInput.focus();
     createCashbookForm.reset();
+    
+    // Update modal title and button text for create mode
+    document.querySelector('#createCashbookModal .modal-header h3').textContent = 'Create New Cashbook';
+    createBtn.innerHTML = '<i class="fas fa-plus"></i> Create Cashbook';
+}
+
+function showEditForm(cashbook) {
+    console.log('showEditForm called with:', cashbook);
+    cashbookToEdit = cashbook;
+    createCashbookModal.style.display = 'flex';
+    
+    // Populate form with cashbook data
+    cashbookNameInput.value = cashbook.name;
+    cashbookDescriptionInput.value = cashbook.description || '';
+    cashbookColorInput.value = cashbook.color || 'blue';
+    
+    // Update modal title and button text for edit mode
+    document.querySelector('#createCashbookModal .modal-header h3').textContent = 'Edit Cashbook';
+    createBtn.innerHTML = '<i class="fas fa-save"></i> Update Cashbook';
+    
+    cashbookNameInput.focus();
 }
 
 function hideCreateForm() {
     createCashbookModal.style.display = 'none';
+}
+
+function showDeleteModal(cashbookId) {
+    cashbookToDelete = cashbookId;
+    deleteCashbookModal.style.display = 'flex';
+}
+
+function hideDeleteModal() {
+    deleteCashbookModal.style.display = 'none';
+    cashbookToDelete = null;
 }
 
 function validateInput() {
@@ -100,87 +148,12 @@ function validateInput() {
 
 async function loadCashbooks() {
     try {
-        showLoadingState();
-        
-        // Show dummy data for demonstration
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading delay
-        
-        cashbooks = [
-            {
-                id: 1,
-                name: "Personal Expenses",
-                description: "Track my daily personal spending and income",
-                color: "blue",
-                balance: 2450.75,
-                totalTransactions: 124,
-                lastUsed: "2025-07-20T14:30:00Z",
-                createdAt: "2025-06-15T09:00:00Z"
-            },
-            {
-                id: 2,
-                name: "Business Account",
-                description: "Company expenses and revenue tracking",
-                color: "green",
-                balance: 15750.00,
-                totalTransactions: 89,
-                lastUsed: "2025-07-19T16:45:00Z",
-                createdAt: "2025-06-01T10:30:00Z"
-            },
-            {
-                id: 3,
-                name: "Vacation Fund",
-                description: "Saving for the upcoming Europe trip",
-                color: "purple",
-                balance: 890.25,
-                totalTransactions: 23,
-                lastUsed: "2025-07-18T12:15:00Z",
-                createdAt: "2025-05-20T14:00:00Z"
-            },
-            {
-                id: 4,
-                name: "Home Renovation",
-                description: "Kitchen and bathroom renovation expenses",
-                color: "orange",
-                balance: -1250.50,
-                totalTransactions: 45,
-                lastUsed: "2025-07-17T09:30:00Z",
-                createdAt: "2025-04-10T11:45:00Z"
-            },
-            {
-                id: 5,
-                name: "Investment Portfolio",
-                description: "Stock market investments and dividends",
-                color: "teal",
-                balance: 8900.00,
-                totalTransactions: 67,
-                lastUsed: "2025-07-16T13:20:00Z",
-                createdAt: "2025-03-15T16:00:00Z"
-            },
-            {
-                id: 6,
-                name: "Emergency Fund",
-                description: "Emergency savings for unexpected expenses",
-                color: "red",
-                balance: 5000.00,
-                totalTransactions: 12,
-                lastUsed: "2025-07-15T10:45:00Z",
-                createdAt: "2025-02-01T08:30:00Z"
-            }
-        ];
-        
-        if (cashbooks.length === 0) {
-            showEmptyState();
-        } else {
-            renderCashbooks();
-        }
-        
-        // Uncomment below for real API integration
-        /*
-        const response = await fetchWithAuth(`${API_BASE}/cashbooks`);
+        showLoadingState();     
+        cashbooks = [];        
+        const response = await fetchWithAuth(`${API_BASE}/cashbook/cashbooks`);
         
         if (response.ok) {
-            cashbooks = await response.json();
-            
+            cashbooks = await response.json();            
             if (cashbooks.length === 0) {
                 showEmptyState();
             } else {
@@ -189,7 +162,7 @@ async function loadCashbooks() {
         } else {
             throw new Error('Failed to load cashbooks');
         }
-        */
+        
     } catch (error) {
         console.error('Error loading cashbooks:', error);
         showNotification('Failed to load cashbooks. Please refresh the page.', 'error');
@@ -248,7 +221,7 @@ function createCashbookCard(cashbook) {
     const card = document.createElement('div');
     card.className = `cashbook-card ${cashbook.color || 'blue'}`;
     
-    const lastUsed = cashbook.lastUsed ? new Date(cashbook.lastUsed).toLocaleDateString() : 'Never';
+    const lastUsed = formatDateWithTime(cashbook.updatedDate);
     const transactionCount = cashbook.totalTransactions || 0;
     const balance = cashbook.balance || 0;
     
@@ -291,7 +264,7 @@ function createCashbookListItem(cashbook) {
     const item = document.createElement('div');
     item.className = 'cashbook-list-item';
     
-    const lastUsed = cashbook.lastUsed ? new Date(cashbook.lastUsed).toLocaleDateString() : 'Never';
+    const lastUsed = formatDateWithTime(cashbook.lastUsed);
     const transactionCount = cashbook.totalTransactions || 0;
     const balance = cashbook.balance || 0;
     
@@ -334,8 +307,99 @@ function openCashbook(cashbookId) {
 
 function showCashbookMenu(event, cashbookId) {
     event.stopPropagation();
-    // TODO: Implement context menu for edit/delete actions
-    console.log('Show menu for cashbook:', cashbookId);
+    // Remove any existing menu
+    const existingMenu = document.getElementById('cashbookMenuPopup');
+    if (existingMenu) existingMenu.remove();
+
+    // Create menu popup
+    const menu = document.createElement('div');
+    menu.id = 'cashbookMenuPopup';
+    menu.style.position = 'absolute';
+    menu.style.zIndex = '1000';
+    menu.style.background = '#fff';
+    menu.style.border = '1px solid #e1e5e9';
+    menu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+    menu.style.padding = '8px 16px';
+    menu.style.borderRadius = '8px';
+    menu.style.top = `${event.clientY}px`;
+    menu.style.left = `${event.clientX}px`;
+
+    // Add edit link
+    const editLink = document.createElement('a');
+    editLink.href = '#';
+    editLink.textContent = 'Edit';
+    editLink.style.color = '#6b7280';
+    editLink.style.display = 'block';
+    editLink.style.margin = '8px 0';
+    editLink.style.textDecoration = 'none';
+    editLink.onclick = (e) => {
+        e.preventDefault();
+        menu.remove();
+        // Find the cashbook and show edit form
+        const cashbook = cashbooks.find(cb => cb.id == cashbookId); // Use == for loose comparison
+        console.log('Found cashbook for editing:', cashbook, 'ID:', cashbookId);
+        if (cashbook) {
+            showEditForm(cashbook);
+        } else {
+            console.error('Cashbook not found with ID:', cashbookId);
+            showNotification('Error: Cashbook not found', 'error');
+        }
+    };
+    menu.appendChild(editLink);
+
+    // Add delete link
+    const deleteLink = document.createElement('a');
+    deleteLink.href = '#';
+    deleteLink.textContent = 'Delete';
+    deleteLink.style.color = '#ef4444';
+    deleteLink.style.display = 'block';
+    deleteLink.style.margin = '8px 0';
+    deleteLink.onclick = (e) => {
+        e.preventDefault();
+        menu.remove();
+        // Show confirmation modal instead of browser confirm
+        showDeleteModal(cashbookId);
+    };
+    menu.appendChild(deleteLink);
+
+    // Remove menu on click outside
+    setTimeout(() => {
+        document.addEventListener('click', function handler(e) {
+            if (!menu.contains(e.target)) {
+                menu.remove();
+                document.removeEventListener('click', handler);
+            }
+        });
+    }, 0);
+
+    document.body.appendChild(menu);
+}
+
+async function confirmDeleteCashbook() {
+    if (!cashbookToDelete) return;
+    
+    confirmDeleteCashbookBtn.classList.add('loading');
+    confirmDeleteCashbookBtn.disabled = true;
+    
+    try {
+        const response = await fetchWithAuth(`${API_BASE}/cashbook/delete?cashbookId=${cashbookToDelete}`, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            showNotification('Cashbook deleted successfully!', 'success');
+            hideDeleteModal();
+            loadCashbooks();
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            const errorMessage = errorData.message || 'Failed to delete cashbook.';
+            showNotification(errorMessage, 'error');
+        }
+    } catch (error) {
+        showNotification('Network error. Please try again.', 'error');
+    } finally {
+        confirmDeleteCashbookBtn.classList.remove('loading');
+        confirmDeleteCashbookBtn.disabled = false;
+    }
 }
 
 async function handleCreateCashbook(e) {
@@ -367,27 +431,44 @@ async function handleCreateCashbook(e) {
             color: color
         };
         
-        const response = await fetchWithAuth(`${API_BASE}/cashbook/create`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+        let response;
+        let successMessage;
+        
+        if (cashbookToEdit) {
+            // Update existing cashbook
+            response = await fetchWithAuth(`${API_BASE}/cashbook/update?cashbookId=${cashbookToEdit.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            successMessage = `Cashbook "${name}" updated successfully! 📚`;
+        } else {
+            // Create new cashbook
+            response = await fetchWithAuth(`${API_BASE}/cashbook/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            successMessage = `Cashbook "${name}" created successfully! 📚`;
+        }
         
         if (response.ok) {
-            const newCashbook = await response.json();
-            showNotification(`Cashbook "${name}" created successfully! 📚`, 'success');
+            const result = await response.json();
+            showNotification(successMessage, 'success');
             
             hideCreateForm();
             loadCashbooks(); // Reload the list
         } else {
             const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData.message || 'Failed to create cashbook. Please try again.';
+            const errorMessage = errorData.message || `Failed to ${cashbookToEdit ? 'update' : 'create'} cashbook. Please try again.`;
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
-        console.error('Error creating cashbook:', error);
+        console.error(`Error ${cashbookToEdit ? 'updating' : 'creating'} cashbook:`, error);
         showNotification('Network error. Please check your connection and try again.', 'error');
     } finally {
         createBtn.classList.remove('loading');
@@ -397,5 +478,6 @@ async function handleCreateCashbook(e) {
 
 // Make functions available globally for onclick handlers
 window.showCreateForm = showCreateForm;
+window.showEditForm = showEditForm;
 window.openCashbook = openCashbook;
 window.showCashbookMenu = showCashbookMenu;

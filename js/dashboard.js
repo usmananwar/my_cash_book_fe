@@ -60,7 +60,7 @@ function setupEventListeners() {
     cashbooksBtn.onclick = () => navigate('cashbooks.html');
     
     // Create Cashbook
-    createCashbookBtn.onclick = () => navigate('create-cashbook.html');
+  //  createCashbookBtn.onclick = () => navigate('create-cashbook.html');
     
     // Quick action buttons
     quickIncomeBtn.onclick = () => showQuickAddForm('credit');
@@ -134,8 +134,16 @@ async function handleQuickAdd(e) {
     submitBtn.classList.add('loading');
     
     try {
+
+        // Get selected cashbookId from localStorage
+        const selectedCashbookId = localStorage.getItem('selectedCashbookId');
+        if (!selectedCashbookId) {
+            showNotification('No cashbook selected.', 'error');
+            return;
+        }
+
         const res = await fetchWithAuthAndNotify(
-            `${API_BASE}/cashbook/${currentTransactionType}?amount=${amount}&description=${description}&category=${category}`,
+            `${API_BASE}/cashbook/${currentTransactionType}?cashbookId=${selectedCashbookId}&amount=${amount}&description=${description}&category=${category}`,
             { method: 'POST' },
             `${currentTransactionType === 'credit' ? 'Income' : 'Expense'} of $${amount} added successfully! ${currentTransactionType === 'credit' ? '💰' : '💸'}`,
             `Failed to add ${currentTransactionType}. Please try again.`
@@ -198,7 +206,15 @@ function refreshTransactions() {
 
 async function loadBalance() {
     try {
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/balance`);
+
+        // Get selected cashbookId from localStorage
+        const selectedCashbookId = localStorage.getItem('selectedCashbookId');
+        if (!selectedCashbookId) {
+            showNotification('No cashbook selected.', 'error');
+            return;
+        }
+
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/balance?cashbookId=${selectedCashbookId}`);
         if (res.ok) {
             const data = await res.json();
             const balance = data.balance || data;
@@ -221,28 +237,28 @@ async function loadMonthlyStats() {
         const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         
         // For now, we'll calculate from transactions
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?page=0&size=100`);
-        if (res.ok) {
-            const data = await res.json();
-            const transactions = data.content || data;
+        // const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?page=0&size=100`);
+        // if (res.ok) {
+        //     const data = await res.json();
+        //     const transactions = data.content || data;
             
-            let income = 0;
-            let expense = 0;
+        //     let income = 0;
+        //     let expense = 0;
             
-            transactions.forEach(tx => {
-                const txDate = new Date(tx.timestamp || tx.createdDate);
-                if (txDate >= firstDay && txDate <= lastDay) {
-                    if (tx.type === 'credit') {
-                        income += parseFloat(tx.amount);
-                    } else {
-                        expense += parseFloat(tx.amount);
-                    }
-                }
-            });
+        //     transactions.forEach(tx => {
+        //         const txDate = new Date(tx.timestamp || tx.createdDate);
+        //         if (txDate >= firstDay && txDate <= lastDay) {
+        //             if (tx.type === 'credit') {
+        //                 income += parseFloat(tx.amount);
+        //             } else {
+        //                 expense += parseFloat(tx.amount);
+        //             }
+        //         }
+        //     });
             
-            monthlyIncome.textContent = `+$${income.toFixed(2)}`;
-            monthlyExpense.textContent = `-$${expense.toFixed(2)}`;
-        }
+        //     monthlyIncome.textContent = `+$${income.toFixed(2)}`;
+        //     monthlyExpense.textContent = `-$${expense.toFixed(2)}`;
+        // }
     } catch (error) {
         console.error('Error loading monthly stats:', error);
     }
@@ -254,7 +270,14 @@ async function loadTransactions(append = false) {
     loading = true;
     
     try {
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?page=${currentPage}&size=${pageSize}`);
+        // Get selected cashbookId from localStorage
+        const selectedCashbookId = localStorage.getItem('selectedCashbookId');
+        if (!selectedCashbookId) {
+            showNotification('No cashbook selected.', 'error');
+            return;
+        }
+        // Fetch transactions for the selected cashbook
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?cashbookId=${selectedCashbookId}&page=${currentPage}&size=${pageSize}`);
         if (res.ok) {
             const data = await res.json();
             const transactions = data.content || data;
