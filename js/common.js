@@ -145,27 +145,17 @@ export async function fetchWithAuthAndNotify(url, options = {}, successMessage =
             return response;
         } else {
             // Handle different error status codes
-            let message = errorMessage || 'An error occurred';
+            let message = await parseErrorResponse(
+                response,
+                errorMessage || 'An error occurred'
+            );
             
+            // Special handling for 401 - redirect to login
             if (response.status === 401) {
-                message = 'Session expired. Please login again.';
                 setTimeout(() => {
                     localStorage.removeItem('jwtToken');
                     navigate('index.html');
                 }, 2000);
-            } else if (response.status === 403) {
-                message = 'Access denied. You don\'t have permission.';
-            } else if (response.status === 404) {
-                message = 'Resource not found.';
-            } else if (response.status === 500) {
-                message = 'Server error. Please try again later.';
-            } else {
-                try {
-                    const errorData = await response.json();
-                    message = errorData.message || errorData.error || message;
-                } catch (e) {
-                    // Use default message if JSON parsing fails
-                }
             }
             
             showNotification(message, 'error');
@@ -195,5 +185,23 @@ export function setButtonLoading(button, isLoading = true) {
         if (button.dataset.originalText) {
             button.textContent = button.dataset.originalText;
         }
+    }
+}
+
+/**
+ * Parse error response from backend and return appropriate error message
+ * Backend error response structure: {timestamp, status, error, message, path}
+ * @param {Response} response - The fetch response object
+ * @param {string} defaultMessage - Default message to use if parsing fails
+ * @returns {Promise<string>} - Promise that resolves to the error message
+ */
+export async function parseErrorResponse(response, defaultMessage = 'An error occurred') {
+    try {
+        const errorData = await response.json();
+        // Try to get the message from backend error response
+        return errorData.message || errorData.error || defaultMessage;
+    } catch (e) {
+        // If JSON parsing fails, use default message with status code
+        return `${defaultMessage} (${response.status})`;
     }
 }

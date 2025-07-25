@@ -1,4 +1,4 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, parseErrorResponse } from './common.js';
 requireLogin();
 
 // DOM Elements
@@ -84,8 +84,7 @@ async function handleCreateCashbook(e) {
                 navigate('dashboard.html');
             }, 2000);
         } else {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData.message || 'Failed to create cashbook. Please try again.';
+            const errorMessage = await parseErrorResponse(response, 'Failed to create cashbook. Please try again.');
             showNotification(errorMessage, 'error');
         }
     } catch (error) {

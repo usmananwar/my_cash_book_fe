@@ -1,4 +1,4 @@
-import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate } from './common.js';
+import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate, parseErrorResponse } from './common.js';
 const transactionId = new URLSearchParams(window.location.search).get('id');
 
 if (!transactionId) {
@@ -32,11 +32,13 @@ async function loadTransactionDetails() {
                 console.error(`No matching option found for transaction type: ${transaction.type}`);
             }
         } else {
-            showNotification('Failed to load transaction details.', 'error');
+            const errorMessage = await parseErrorResponse(res, 'Failed to load transaction details');
+            showNotification(errorMessage, 'error');
             navigate('dashboard.html', 2000);
         }
     } catch (error) {
-        showNotification('Network error while loading transaction.', 'error');
+        console.error('Error loading transaction:', error);
+        showNotification('Network error. Please check your connection.', 'error');
         navigate('dashboard.html', 2000);
     }
 }

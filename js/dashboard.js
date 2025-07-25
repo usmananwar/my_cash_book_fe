@@ -1,4 +1,4 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime, parseErrorResponse } from './common.js';
 requireLogin();
 
 // DOM Elements
@@ -206,7 +206,6 @@ function refreshTransactions() {
 
 async function loadBalance() {
     try {
-
         // Get selected cashbookId from localStorage
         const selectedCashbookId = localStorage.getItem('selectedCashbookId');
         if (!selectedCashbookId) {
@@ -223,9 +222,13 @@ async function loadBalance() {
                 balanceDisplay.textContent = `$${parseFloat(balance).toFixed(2)}`;
                 balanceDisplay.classList.remove('hidden');
             }
+        } else {
+            const errorMessage = await parseErrorResponse(res, 'Failed to load balance');
+            showNotification(errorMessage, 'error');
         }
     } catch (error) {
         console.error('Error loading balance:', error);
+        showNotification('Network error. Please check your connection.', 'error');
     }
 }
 
@@ -312,6 +315,9 @@ async function loadTransactions(append = false) {
             } else if (!append) {
                 currentPage = hasMore ? 1 : 0;
             }
+        } else {
+            const errorMessage = await parseErrorResponse(res, 'Failed to load transactions');
+            showNotification(errorMessage, 'error');
         }
     } catch (error) {
         console.error('Error loading transactions:', error);
@@ -334,19 +340,8 @@ function createTransactionElement(tx) {
     const formattedBalance = `$${parseFloat(balanceAfter).toFixed(2)}`;
     
     // Format the transaction date
-    let timestamp = tx.timestamp || tx.createdDate || '';
-    let formattedDate = '';
-    if (timestamp) {
-        try {
-            const date = new Date(timestamp);
-            formattedDate = date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            });
-        } catch (e) {
-            formattedDate = 'Unknown';
-        }
-    }
+    let timestamp = tx.updatedDate;
+    let formattedDate = formatDateWithTime(timestamp);
     
     const element = document.createElement('div');
     element.className = 'transaction-item';

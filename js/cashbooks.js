@@ -1,4 +1,4 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime, parseErrorResponse } from './common.js';
 requireLogin();
 
 // DOM Elements
@@ -160,12 +160,14 @@ async function loadCashbooks() {
                 renderCashbooks();
             }
         } else {
-            throw new Error('Failed to load cashbooks');
+            const errorMessage = await parseErrorResponse(response, 'Failed to load cashbooks');
+            showNotification(errorMessage, 'error');
+            showEmptyState();
         }
         
     } catch (error) {
         console.error('Error loading cashbooks:', error);
-        showNotification('Failed to load cashbooks. Please refresh the page.', 'error');
+        showNotification('Network error. Please check your connection and try again.', 'error');
         showEmptyState();
     }
 }
@@ -381,8 +383,7 @@ async function confirmDeleteCashbook() {
             hideDeleteModal();
             loadCashbooks();
         } else {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData.message || 'Failed to delete cashbook.';
+            const errorMessage = await parseErrorResponse(response, 'Failed to delete cashbook');
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
@@ -454,8 +455,10 @@ async function handleCreateCashbook(e) {
             hideCreateForm();
             loadCashbooks(); // Reload the list
         } else {
-            const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData.message || `Failed to ${cashbookToEdit ? 'update' : 'create'} cashbook. Please try again.`;
+            const errorMessage = await parseErrorResponse(
+                response, 
+                `Failed to ${cashbookToEdit ? 'update' : 'create'} cashbook. Please try again.`
+            );
             showNotification(errorMessage, 'error');
         }
     } catch (error) {
