@@ -1,6 +1,14 @@
 import { API_BASE, showNotification, setButtonLoading, navigate, parseErrorResponse } from './common.js';
 
 const registerForm = document.getElementById('registerForm');
+const loginLink = document.getElementById('loginLink');
+
+// Handle login link click
+loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/');
+});
+
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
