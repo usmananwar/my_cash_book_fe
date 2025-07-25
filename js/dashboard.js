@@ -1,5 +1,8 @@
-import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime, parseErrorResponse } from './common.js';
+import { getJwtToken, fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, logoutAndRedirect, requireLogin, navigate, formatDateWithTime, parseErrorResponse, initializePWAInstall } from './common.js';
 requireLogin();
+
+// Initialize PWA install functionality
+initializePWAInstall();
 
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');

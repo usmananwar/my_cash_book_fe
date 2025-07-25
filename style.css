@@ -1971,3 +1971,46 @@ button:focus, input:focus, select:focus {
     border: 2px solid rgba(102, 126, 234, 0.2);
     backdrop-filter: blur(10px);
 }
+
+/* Install button specific styles */
+#installBtn {
+    background: linear-gradient(135deg, #2d8f47 0%, #2e7d32 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#installBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.4);
+    background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+}
+
+#installBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(46, 125, 50, 0.3);
+}
+
+/* Make install button responsive */
+@media (max-width: 768px) {
+    #installBtn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+}

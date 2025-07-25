@@ -1,7 +1,10 @@
-import { API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate, parseErrorResponse } from './common.js';
+import { API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate, parseErrorResponse, initializePWAInstall } from './common.js';
 
 const loginForm = document.getElementById('loginForm');
 const registerLink = document.getElementById('registerLink');
+
+// Initialize PWA install functionality
+initializePWAInstall();
 
 // Handle register link click
 registerLink.addEventListener('click', (e) => {

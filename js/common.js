@@ -205,3 +205,57 @@ export async function parseErrorResponse(response, defaultMessage = 'An error oc
         return `${defaultMessage} (${response.status})`;
     }
 }
+
+// PWA Install functionality
+export function initializePWAInstall() {
+    const installBtn = document.getElementById('installBtn');
+    if (!installBtn) {
+        console.log('Install button not found on this page');
+        return;
+    }
+
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Update UI to notify the user they can install the PWA
+        installBtn.style.display = 'block';
+        console.log('PWA install prompt available');
+    });
+
+    // Handle install button click
+    installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) {
+            console.log('No install prompt available');
+            showNotification('App installation not available at this time', 'info');
+            return;
+        }
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            showNotification('App installed successfully! 🎉', 'success');
+        } else {
+            console.log('User dismissed the install prompt');
+        }
+        
+        // Clear the deferredPrompt variable
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+    });
+
+    // Handle successful installation
+    window.addEventListener('appinstalled', (evt) => {
+        console.log('PWA was installed');
+        showNotification('App installed successfully! 🎉', 'success');
+        installBtn.style.display = 'none';
+    });
+}
