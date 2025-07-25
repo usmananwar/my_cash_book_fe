@@ -222,7 +222,6 @@ function createCashbookCard(cashbook) {
     card.className = `cashbook-card ${cashbook.color || 'blue'}`;
     
     const lastUsed = formatDateWithTime(cashbook.updatedDate);
-    const transactionCount = cashbook.totalTransactions || 0;
     const balance = cashbook.balance || 0;
     
     card.innerHTML = `
@@ -239,15 +238,9 @@ function createCashbookCard(cashbook) {
         <div class="cashbook-content">
             <h3>${cashbook.name}</h3>
             <p class="cashbook-description">${cashbook.description || 'No description'}</p>
-            <div class="cashbook-stats">
-                <div class="stat">
-                    <span class="stat-value ${balance >= 0 ? 'positive' : 'negative'}">$${Math.abs(balance).toFixed(2)}</span>
-                    <span class="stat-label">Balance</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-value">${transactionCount}</span>
-                    <span class="stat-label">Transactions</span>
-                </div>
+            <div class="cashbook-balance">
+                <span class="balance-value ${balance >= 0 ? 'positive' : 'negative'}">$${Math.abs(balance).toFixed(2)}</span>
+                <span class="balance-label">Current Balance</span>
             </div>
             <div class="cashbook-footer">
                 <span class="last-used">Last used: ${lastUsed}</span>
@@ -265,7 +258,6 @@ function createCashbookListItem(cashbook) {
     item.className = 'cashbook-list-item';
     
     const lastUsed = formatDateWithTime(cashbook.lastUsed);
-    const transactionCount = cashbook.totalTransactions || 0;
     const balance = cashbook.balance || 0;
     
     item.innerHTML = `
@@ -279,7 +271,6 @@ function createCashbookListItem(cashbook) {
             </div>
             <p class="description">${cashbook.description || 'No description'}</p>
             <div class="cashbook-list-meta">
-                <span>${transactionCount} transactions</span>
                 <span>Last used: ${lastUsed}</span>
             </div>
         </div>
