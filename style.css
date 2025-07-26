@@ -102,6 +102,13 @@ h1 {
     box-sizing: border-box;
 }
 
+.input-group select {
+    padding-left: 48px;
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .signup-link {
     margin: 20px 0;
 }
@@ -310,10 +317,10 @@ a:hover {
     margin-bottom: 20px;
 }
 
-.create-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
+button.create-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 2px solid rgba(102, 126, 234, 0.5) !important;
+    color: #2d3748 !important;
     padding: 12px 24px;
     border-radius: 12px;
     font-weight: 600;
@@ -323,14 +330,18 @@ a:hover {
     align-items: center;
     gap: 8px;
     backdrop-filter: blur(10px);
-    text-transform: none;
-    letter-spacing: 0;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
-.create-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+button.create-btn:hover {
+    background: rgba(102, 126, 234, 0.1) !important;
+    border: 2px solid rgba(102, 126, 234, 0.8) !important;
+    color: #1a202c !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
 }
 
 .cashbooks-section {
@@ -1689,7 +1700,7 @@ a:hover {
 select {
     width: 100%;
     padding: 16px 20px;
-    margin: 10px 0;
+    margin: 0px 0;
     border: 2px solid #e1e5e9;
     border-radius: 12px;
     box-sizing: border-box;
