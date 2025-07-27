@@ -2028,3 +2028,63 @@ button:focus, input:focus, select:focus {
         font-size: 12px;
     }
 }
+
+/* Transaction Info Display */
+.delete-section {
+    text-align: right;
+}
+
+.delete-link {
+    color: #e53e3e;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.delete-link:hover {
+    background: #e53e3e;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.transaction-info {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.info-value {
+    font-weight: 500;
+    color: #2d3748;
+    font-size: 14px;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 4px 0px;
+    border-radius: 6px;
+}

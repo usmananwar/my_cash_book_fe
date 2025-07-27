@@ -20,6 +20,26 @@
 <body>
     <div class="container">
         <h1>✏️ Edit Transaction</h1>
+     
+                <!-- Delete Link -->
+        <div class="delete-section">
+            <a href="#" id="deleteTransactionLink" class="delete-link">🗑️ Delete Transaction</a>
+        </div>
+
+        <!-- Transaction Date Information -->
+        <div class="transaction-info">
+            <div class="info-row">
+                <span class="info-label">Created:</span>
+                <span id="transactionDate" class="info-value">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Last Updated:</span>
+                <span id="updatedDate" class="info-value">-</span>
+            </div>
+        </div>
+
+
+        
         <form id="editTransactionForm">
             <input type="hidden" id="transactionId">
             <input type="number" id="editAmount" placeholder="Amount" required step="0.01">
@@ -30,12 +50,12 @@
                 <option value="debit">💸 Debit (Expense)</option>
             </select>        
 
-            <div class="actions" style="display: flex; gap: 8px;">                     
-                <button id="deleteTransactionBtn" type = "button" class="btn-danger" style="width: 140px;">🗑️ Delete</button>
-                <button type = "submit" class="btn-secondary" style="width: 140px; margin-bottom: 0px;">Save</button>
+            <div class="actions" style="display: flex; gap: 8px;"> 
+                <button type = "button" onclick="window.location.href='dashboard.html'" style="width: 140px;" >← Back</button>
+                <button id="saveTransactionBtn" type = "submit" class="btn-secondary" style="width: 140px; margin-bottom: 0px;">Save</button>
             </div>
 
-            <button onclick="window.location.href='dashboard.html'" >← Back to Dashboard</button>
+            
          </form>
 
 
@@ -44,8 +64,9 @@
             <div style="background:#fff; padding:2em; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); text-align:center; min-width:300px;">
                 <h2>Delete Transaction</h2>
                 <p>Are you sure you want to delete this transaction? This action cannot be undone.</p>
-                <button id="confirmDeleteBtn" class="btn-danger" style="margin-right:1em;">Yes, Delete</button>
-                <button id="cancelDeleteBtn" class="btn-secondary">Cancel</button>
+                
+                <button id="cancelDeleteBtn" class="btn-danger" style="margin-right:1em;">No</button>
+                <button id="confirmDeleteBtn" class="btn-secondary" >Yes</button>
             </div>
         </div>
         
