@@ -63,7 +63,6 @@ export const API_BASE = isDevelopment
 // Alternative: You can also use environment detection for multiple environments
 // export const API_BASE = (() => {
 //     if (isDevelopment) return 'https://192.168.0.17:8080/api';
-//     if (window.location.hostname.includes('render.com')) return 'https://your-backend.onrender.com/api';
 //     return 'http://24.52.208.248:9747/api'; // Fallback
 // })();
 
