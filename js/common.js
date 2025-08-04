@@ -1,3 +1,17 @@
+// Utility: Format date and time for cashbook updatedDate
+export function formatDateWithTime(dateString) {
+    if (!dateString) return 'Never';
+    const date = new Date(dateString);
+    return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    });
+}
 // Navigation helper
 // Dynamic base path for local and GitHub Pages
 const BASE_PATH = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -49,7 +63,6 @@ export const API_BASE = isDevelopment
 // Alternative: You can also use environment detection for multiple environments
 // export const API_BASE = (() => {
 //     if (isDevelopment) return 'https://192.168.0.17:8080/api';
-//     if (window.location.hostname.includes('render.com')) return 'https://your-backend.onrender.com/api';
 //     return 'http://24.52.208.248:9747/api'; // Fallback
 // })();
 
@@ -131,27 +144,17 @@ export async function fetchWithAuthAndNotify(url, options = {}, successMessage =
             return response;
         } else {
             // Handle different error status codes
-            let message = errorMessage || 'An error occurred';
+            let message = await parseErrorResponse(
+                response,
+                errorMessage || 'An error occurred'
+            );
             
+            // Special handling for 401 - redirect to login
             if (response.status === 401) {
-                message = 'Session expired. Please login again.';
                 setTimeout(() => {
                     localStorage.removeItem('jwtToken');
                     navigate('index.html');
                 }, 2000);
-            } else if (response.status === 403) {
-                message = 'Access denied. You don\'t have permission.';
-            } else if (response.status === 404) {
-                message = 'Resource not found.';
-            } else if (response.status === 500) {
-                message = 'Server error. Please try again later.';
-            } else {
-                try {
-                    const errorData = await response.json();
-                    message = errorData.message || errorData.error || message;
-                } catch (e) {
-                    // Use default message if JSON parsing fails
-                }
             }
             
             showNotification(message, 'error');
@@ -182,4 +185,76 @@ export function setButtonLoading(button, isLoading = true) {
             button.textContent = button.dataset.originalText;
         }
     }
+}
+
+/**
+ * Parse error response from backend and return appropriate error message
+ * Backend error response structure: {timestamp, status, error, message, path}
+ * @param {Response} response - The fetch response object
+ * @param {string} defaultMessage - Default message to use if parsing fails
+ * @returns {Promise<string>} - Promise that resolves to the error message
+ */
+export async function parseErrorResponse(response, defaultMessage = 'An error occurred') {
+    try {
+        const errorData = await response.json();
+        // Try to get the message from backend error response
+        return errorData.message || errorData.error || defaultMessage;
+    } catch (e) {
+        // If JSON parsing fails, use default message with status code
+        return `${defaultMessage} (${response.status})`;
+    }
+}
+
+// PWA Install functionality
+export function initializePWAInstall() {
+    const installBtn = document.getElementById('installBtn');
+    if (!installBtn) {
+        console.log('Install button not found on this page');
+        return;
+    }
+
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Update UI to notify the user they can install the PWA
+        installBtn.style.display = 'block';
+        console.log('PWA install prompt available');
+    });
+
+    // Handle install button click
+    installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) {
+            console.log('No install prompt available');
+            showNotification('App installation not available at this time', 'info');
+            return;
+        }
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            showNotification('App installed successfully! 🎉', 'success');
+        } else {
+            console.log('User dismissed the install prompt');
+        }
+        
+        // Clear the deferredPrompt variable
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+    });
+
+    // Handle successful installation
+    window.addEventListener('appinstalled', (evt) => {
+        console.log('PWA was installed');
+        showNotification('App installed successfully! 🎉', 'success');
+        installBtn.style.display = 'none';
+    });
 }

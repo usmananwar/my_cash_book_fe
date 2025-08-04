@@ -1,6 +1,17 @@
-import { API_BASE, showNotification, setButtonLoading, navigate } from './common.js';
+import { API_BASE, showNotification, setButtonLoading, navigate, parseErrorResponse, initializePWAInstall } from './common.js';
 
 const registerForm = document.getElementById('registerForm');
+const loginLink = document.getElementById('loginLink');
+
+// Initialize PWA install functionality
+initializePWAInstall();
+
+// Handle login link click
+loginLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/');
+});
+
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -25,20 +36,10 @@ registerForm.addEventListener('submit', async (e) => {
             showNotification('Registration successful! Please login to continue. 🎉', 'success');
             navigate('/', 2000);
         } else {
-            let errorMessage = 'Registration failed. Please try again.';
-            
-            if (res.status === 400) {
-                errorMessage = 'Invalid input. Please check your details.';
-            } else if (res.status === 409) {
-                errorMessage = 'Email already exists. Please use a different email.';
-            } else {
-                try {
-                    const errorData = await res.json();
-                    errorMessage = errorData.message || errorData.error || errorMessage;
-                } catch (e) {
-                    // Use default message
-                }
-            }
+            const errorMessage = await parseErrorResponse(
+                res,
+                'Registration failed. Please try again.'
+            );
             
             showNotification(errorMessage, 'error');
         }

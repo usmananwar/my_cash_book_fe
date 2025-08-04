@@ -1,4 +1,4 @@
-import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate } from './common.js';
+import { fetchWithAuth, API_BASE, showNotification, fetchWithAuthAndNotify, setButtonLoading, navigate, parseErrorResponse, formatDateWithTime } from './common.js';
 const transactionId = new URLSearchParams(window.location.search).get('id');
 
 if (!transactionId) {
@@ -10,6 +10,8 @@ const editAmount = document.getElementById('editAmount');
 const editDescription = document.getElementById('editDescription');
 const editType = document.getElementById('editType');
 const editTransactionForm = document.getElementById('editTransactionForm');
+const transactionDateElement = document.getElementById('transactionDate');
+const updatedDateElement = document.getElementById('updatedDate');
 
 async function loadTransactionDetails() {
     try {
@@ -18,6 +20,10 @@ async function loadTransactionDetails() {
             const transaction = await res.json();
             editAmount.value = transaction.amount;
             editDescription.value = transaction.description;
+
+            // Populate date fields
+            transactionDateElement.textContent = formatDateWithTime(transaction.timestamp);
+            updatedDateElement.textContent = formatDateWithTime(transaction.updatedDate);
 
             // Populate dropdown with transaction types
             const transactionTypes = ['Credit', 'Debit'];
@@ -32,11 +38,13 @@ async function loadTransactionDetails() {
                 console.error(`No matching option found for transaction type: ${transaction.type}`);
             }
         } else {
-            showNotification('Failed to load transaction details.', 'error');
+            const errorMessage = await parseErrorResponse(res, 'Failed to load transaction details');
+            showNotification(errorMessage, 'error');
             navigate('dashboard.html', 2000);
         }
     } catch (error) {
-        showNotification('Network error while loading transaction.', 'error');
+        console.error('Error loading transaction:', error);
+        showNotification('Network error. Please check your connection.', 'error');
         navigate('dashboard.html', 2000);
     }
 }
@@ -44,7 +52,7 @@ async function loadTransactionDetails() {
 editTransactionForm.onsubmit = async (e) => {
     e.preventDefault();
     
-    const submitButton = e.target.querySelector('button[type="submit"]');
+    const submitButton = document.getElementById('saveTransactionBtn');
     setButtonLoading(submitButton, true);
     
     const updatedTransaction = {
@@ -77,13 +85,14 @@ editTransactionForm.onsubmit = async (e) => {
 
 loadTransactionDetails();
 // Delete Transaction logic
-const deleteBtn = document.getElementById('deleteTransactionBtn');
+const deleteLink = document.getElementById('deleteTransactionLink');
 const deleteModal = document.getElementById('deleteModal');
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
-if (deleteBtn && deleteModal && confirmDeleteBtn && cancelDeleteBtn) {
-    deleteBtn.onclick = () => {
+if (deleteLink && deleteModal && confirmDeleteBtn && cancelDeleteBtn) {
+    deleteLink.onclick = (e) => {
+        e.preventDefault();
         deleteModal.style.display = 'flex';
     };
     cancelDeleteBtn.onclick = () => {

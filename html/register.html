@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - My Cash Book</title>
+    <title>Register - My Cashbook</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="../manifest.json">
 
     <script>
       if ('serviceWorker' in navigator) {
@@ -18,16 +20,57 @@
     </script>
 </head>
 <body>
+    <button id="installBtn" style="display:none;">Install App</button>
     <div class="container">
-        <h1>💰 Join Cash Book</h1>
+        <div class="logo-section">
+            <div class="app-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h1>Join My Cashbook</h1>
+            <p class="tagline">Start managing your finances today</p>
+        </div>
+        
         <form id="registerForm">
-            <input type="text" id="firstName" placeholder="First Name" required>
-            <input type="text" id="lastName" placeholder="Last Name" required>
-            <input type="email" id="email" placeholder="Your email address" required>
-            <input type="password" id="password" placeholder="Create a password" required>
-            <button type="submit">Create Account</button>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="firstName" placeholder="First Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="lastName" placeholder="Last Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="email" id="email" placeholder="Your email address" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" placeholder="Create a password" required>
+            </div>
+            <button type="submit">
+                <i class="fas fa-user-plus"></i>
+                Create Account
+            </button>
         </form>
-        <p>Already have an account? <a href="/index.html">Sign in here</a></p>
+        
+        <div class="signup-link">
+            <p>Already have an account? <a href="#" id="loginLink">Sign in here</a></p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-chart-line"></i>
+                <span>Track Expenses</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure & Private</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Works Offline</span>
+            </div>
+        </div>
     </div>
     <script type="module" src="../js/register.js"></script>
 </body>
