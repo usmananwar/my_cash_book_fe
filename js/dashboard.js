@@ -349,7 +349,7 @@ async function exportFile() {
         if (res.ok) {
             // Get the filename from Content-Disposition header if available
             const contentDisposition = res.headers.get('Content-Disposition');
-            let filename = 'export.csv'; // default filename
+            let filename = 'export.xslx'; // default filename
             
             if (contentDisposition) {
                 const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
