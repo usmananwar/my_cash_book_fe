@@ -96,6 +96,9 @@ function setupEventListeners() {
     
     // Load more
     loadMoreBtn.onclick = loadMoreTransactions;
+
+    // Export
+    exportBtn.onclick = exportFile;
 }
 
 function showQuickAddForm(type) {
