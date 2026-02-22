@@ -6,6 +6,7 @@ initializePWAInstall();
 
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');
+const profileBtn = document.getElementById('profileBtn');
 const cashbooksBtn = document.getElementById('cashbooksBtn');
 const createCashbookBtn = document.getElementById('createCashbookBtn');
 const quickIncomeBtn = document.getElementById('quickIncomeBtn');
@@ -60,6 +61,7 @@ function setupEventListeners() {
     logoutBtn.onclick = logoutAndRedirect;
     
     // Navigation
+    profileBtn.onclick = () => navigate('profile.html');
     cashbooksBtn.onclick = () => navigate('cashbooks.html');
     
     // Create Cashbook
@@ -329,6 +331,59 @@ async function loadTransactions(append = false) {
         loading = false;
     }
 }
+
+
+async function exportFile() {
+    try {
+        const selectedCashbookId = localStorage.getItem('selectedCashbookId');
+        if (!selectedCashbookId) {
+            showNotification('No cashbook selected.', 'error');
+            return;
+        }
+
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/export?cashbookId=${selectedCashbookId}`);
+        
+        if (res.ok) {
+            // Get the filename from Content-Disposition header if available
+            const contentDisposition = res.headers.get('Content-Disposition');
+            let filename = 'export.csv'; // default filename
+            
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1].replace(/['"]/g, '');
+                }
+            }
+            
+            // Get the blob from the response
+            const blob = await res.blob();
+            
+            // Create a download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            
+            // Trigger the download
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('File downloaded successfully!', 'success');
+        } else {
+            const errorMessage = await parseErrorResponse(res, 'Failed to export file');
+            showNotification(errorMessage, 'error');
+        }
+    } catch (error) {
+        console.error('Error exporting file:', error);
+        showNotification('Network error. Please check your connection.', 'error');
+    }
+}
+
+
 
 function loadMoreTransactions() {
     loadTransactions(true);

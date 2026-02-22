@@ -3,6 +3,7 @@ requireLogin();
 
 // DOM Elements
 const logoutBtn = document.getElementById('logoutBtn');
+const profileBtn = document.getElementById('profileBtn');
 const createNewCashbookBtn = document.getElementById('createNewCashbookBtn');
 const quickCreateBtn = document.getElementById('quickCreateBtn');
 const fabBtn = document.getElementById('fabBtn');
@@ -39,6 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupEventListeners() {
     // Logout
     logoutBtn.onclick = logoutAndRedirect;
+    
+    // Navigation
+    profileBtn.onclick = () => navigate('profile.html');
     
     // Create cashbook buttons
     createNewCashbookBtn.onclick = showCreateForm;

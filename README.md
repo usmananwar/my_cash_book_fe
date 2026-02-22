@@ -61,6 +61,7 @@ export const API_BASE = window.location.hostname === 'localhost'
 │   ├── dashboard.html  # Main dashboard
 │   ├── cashbooks.html  # Cashbook management
 │   ├── create-cashbook.html # Create new cashbook
+│   ├── profile.html    # User profile management
 │   └── edit-transaction.html # Edit transactions
 ├── js/                 # JavaScript modules
 ├── style.css          # Styles
