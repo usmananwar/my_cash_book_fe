@@ -30,6 +30,9 @@ const loadMoreContainer = document.getElementById('loadMoreContainer');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const timeOfDay = document.getElementById('timeOfDay');
 const exportBtn = document.getElementById('exportBtn');
+const transactionSearchInput = document.getElementById('transactionSearchInput');
+const transactionSearchBtn = document.getElementById('transactionSearchBtn');
+const transactionSearchClearBtn = document.getElementById('transactionSearchClearBtn');
 
 // State
 let currentTransactionType = 'credit';
@@ -40,6 +43,7 @@ let nextTransactionPage = 0;
 const pageSize = 10;
 let loading = false;
 let hasMore = true;
+let transactionSearchEmptyDebounce = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -102,6 +106,52 @@ function setupEventListeners() {
     if (exportBtn) {
         exportBtn.onclick = exportFile;
     }
+
+    if (transactionSearchInput && transactionSearchBtn && transactionSearchClearBtn) {
+        transactionSearchBtn.onclick = () => {
+            refreshTransactions();
+        };
+        transactionSearchClearBtn.onclick = () => {
+            if (transactionSearchEmptyDebounce) {
+                clearTimeout(transactionSearchEmptyDebounce);
+                transactionSearchEmptyDebounce = null;
+            }
+            transactionSearchInput.value = '';
+            updateTransactionSearchClearVisibility();
+            refreshTransactions();
+        };
+        transactionSearchInput.addEventListener('input', onTransactionSearchInput);
+        transactionSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                refreshTransactions();
+            }
+        });
+        updateTransactionSearchClearVisibility();
+    }
+}
+
+function onTransactionSearchInput() {
+    updateTransactionSearchClearVisibility();
+    const q = transactionSearchInput.value.trim();
+    if (transactionSearchEmptyDebounce) {
+        clearTimeout(transactionSearchEmptyDebounce);
+        transactionSearchEmptyDebounce = null;
+    }
+    if (q.length === 0) {
+        transactionSearchEmptyDebounce = setTimeout(() => {
+            transactionSearchEmptyDebounce = null;
+            if (!transactionSearchInput.value.trim()) {
+                refreshTransactions();
+            }
+        }, 200);
+    }
+}
+
+function updateTransactionSearchClearVisibility() {
+    if (!transactionSearchClearBtn || !transactionSearchInput) return;
+    const has = transactionSearchInput.value.trim().length > 0;
+    transactionSearchClearBtn.style.display = has ? 'flex' : 'none';
 }
 
 function showQuickAddForm(type) {
@@ -299,8 +349,18 @@ async function loadTransactions(append = false) {
             nextTransactionPage = 0;
         }
 
+        const listParams = new URLSearchParams({
+            cashbookId: selectedCashbookId,
+            page: String(pageToFetch),
+            size: String(pageSize)
+        });
+        const searchTerm = transactionSearchInput ? transactionSearchInput.value.trim() : '';
+        if (searchTerm) {
+            listParams.set('search', searchTerm);
+        }
+
         const res = await fetchWithAuth(
-            `${API_BASE}/cashbook/transactions?cashbookId=${selectedCashbookId}&page=${pageToFetch}&size=${pageSize}`
+            `${API_BASE}/cashbook/transactions?${listParams.toString()}`
         );
         if (res.ok) {
             const data = await res.json();
@@ -317,6 +377,21 @@ async function loadTransactions(append = false) {
                 const want = currentFilter === 'credit' ? 'Credit' : currentFilter === 'debit' ? 'Debit' : currentFilter;
                 return tx.type === want;
             });
+
+            if (!append && filteredTransactions.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'transaction-empty-hint';
+                let emptyMsg = 'No transactions yet.';
+                if (searchTerm && currentFilter !== 'all') {
+                    emptyMsg = 'No transactions match this search and filter.';
+                } else if (searchTerm) {
+                    emptyMsg = 'No transactions match this search.';
+                } else if (currentFilter !== 'all') {
+                    emptyMsg = 'No transactions in this category.';
+                }
+                empty.textContent = emptyMsg;
+                transactionsContainer.appendChild(empty);
+            }
             
             filteredTransactions.forEach(tx => {
                 const transactionElement = createTransactionElement(tx);

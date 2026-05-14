@@ -1233,6 +1233,83 @@ button.create-btn:hover {
     transform: none;
 }
 
+.transaction-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.transaction-search-inner {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    min-height: 42px;
+}
+
+.transaction-search-inner input[type="search"] {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 12px;
+    font-size: 15px;
+    color: #1e293b;
+    min-width: 0;
+}
+
+.transaction-search-inner input[type="search"]::placeholder {
+    color: #94a3b8;
+}
+
+.transaction-search-inner input[type="search"]:focus {
+    outline: none;
+}
+
+.transaction-search-submit {
+    border: none;
+    background: #6366f1;
+    color: white;
+    padding: 0 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.transaction-search-submit:hover {
+    background: #4f46e5;
+}
+
+.transaction-search-clear {
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.transaction-search-clear:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.transaction-empty-hint {
+    text-align: center;
+    color: #64748b;
+    font-size: 15px;
+    padding: 20px 12px;
+    margin: 0;
+}
+
 /* Filter Options */
 .filter-options {
     margin-bottom: 16px;
