@@ -29,12 +29,14 @@ const transactionsContainer = document.getElementById('transactionsContainer');
 const loadMoreContainer = document.getElementById('loadMoreContainer');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const timeOfDay = document.getElementById('timeOfDay');
+const exportBtn = document.getElementById('exportBtn');
 
 // State
 let currentTransactionType = 'credit';
 let balanceVisible = true;
 let currentFilter = 'all';
-let currentPage = 0;
+/** Next page index to request when appending (after initial page 0). */
+let nextTransactionPage = 0;
 const pageSize = 10;
 let loading = false;
 let hasMore = true;
@@ -97,8 +99,9 @@ function setupEventListeners() {
     // Load more
     loadMoreBtn.onclick = loadMoreTransactions;
 
-    // Export
-    exportBtn.onclick = exportFile;
+    if (exportBtn) {
+        exportBtn.onclick = exportFile;
+    }
 }
 
 function showQuickAddForm(type) {
@@ -132,7 +135,6 @@ async function handleQuickAdd(e) {
     
     const amount = document.getElementById('quickAmount').value;
     const description = document.getElementById('quickDescription').value;
-    const category = document.getElementById('quickCategory').value;
     
     if (!amount || !description) {
         showNotification('Please fill in all required fields', 'error');
@@ -150,8 +152,13 @@ async function handleQuickAdd(e) {
             return;
         }
 
+        const q = new URLSearchParams({
+            cashbookId: selectedCashbookId,
+            amount: String(amount),
+            description: description
+        });
         const res = await fetchWithAuthAndNotify(
-            `${API_BASE}/cashbook/${currentTransactionType}?cashbookId=${selectedCashbookId}&amount=${amount}&description=${description}&category=${category}`,
+            `${API_BASE}/cashbook/${currentTransactionType}?${q.toString()}`,
             { method: 'POST' },
             `${currentTransactionType === 'credit' ? 'Income' : 'Expense'} of $${amount} added successfully! ${currentTransactionType === 'credit' ? '💰' : '💸'}`,
             `Failed to add ${currentTransactionType}. Please try again.`
@@ -206,7 +213,7 @@ function setFilter(filter) {
 }
 
 function refreshTransactions() {
-    currentPage = 0;
+    nextTransactionPage = 0;
     hasMore = true;
     transactionsContainer.innerHTML = '';
     loadTransactions();
@@ -287,20 +294,28 @@ async function loadTransactions(append = false) {
             showNotification('No cashbook selected.', 'error');
             return;
         }
-        // Fetch transactions for the selected cashbook
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/transactions?cashbookId=${selectedCashbookId}&page=${currentPage}&size=${pageSize}`);
+        const pageToFetch = append ? nextTransactionPage : 0;
+        if (!append) {
+            nextTransactionPage = 0;
+        }
+
+        const res = await fetchWithAuth(
+            `${API_BASE}/cashbook/transactions?cashbookId=${selectedCashbookId}&page=${pageToFetch}&size=${pageSize}`
+        );
         if (res.ok) {
             const data = await res.json();
-            const transactions = data.content || data;
-            
+            const transactions = Array.isArray(data.content) ? data.content : (Array.isArray(data) ? data : []);
+            const pageInfo = data.page;
+
             if (!append) {
                 transactionsContainer.innerHTML = '';
             }
             
-            // Filter transactions
+            // Filter transactions (API uses Credit/Debit; tabs use credit/debit)
             const filteredTransactions = transactions.filter(tx => {
                 if (currentFilter === 'all') return true;
-                return tx.type === currentFilter;
+                const want = currentFilter === 'credit' ? 'Credit' : currentFilter === 'debit' ? 'Debit' : currentFilter;
+                return tx.type === want;
             });
             
             filteredTransactions.forEach(tx => {
@@ -308,21 +323,18 @@ async function loadTransactions(append = false) {
                 transactionsContainer.appendChild(transactionElement);
             });
             
-            // Check if there are more transactions
-            if (data.totalPages !== undefined) {
-                hasMore = currentPage + 1 < data.totalPages;
+            if (pageInfo) {
+                hasMore = pageInfo.hasNext === true;
+                nextTransactionPage = pageInfo.number + 1;
+            } else if (data.totalPages !== undefined) {
+                hasMore = pageToFetch + 1 < data.totalPages;
+                nextTransactionPage = pageToFetch + 1;
             } else {
                 hasMore = transactions.length === pageSize;
+                nextTransactionPage = pageToFetch + 1;
             }
             
-            // Show/hide load more button
             loadMoreContainer.style.display = hasMore ? 'block' : 'none';
-            
-            if (append && hasMore) {
-                currentPage++;
-            } else if (!append) {
-                currentPage = hasMore ? 1 : 0;
-            }
         } else {
             const errorMessage = await parseErrorResponse(res, 'Failed to load transactions');
             showNotification(errorMessage, 'error');
@@ -344,7 +356,10 @@ async function exportFile() {
             return;
         }
 
-        const res = await fetchWithAuth(`${API_BASE}/cashbook/export?cashbookId=${selectedCashbookId}`);
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const res = await fetchWithAuth(`${API_BASE}/cashbook/export?cashbookId=${selectedCashbookId}`, {
+            headers: { 'X-Timezone': tz }
+        });
         
         if (res.ok) {
             // Get the filename from Content-Disposition header if available

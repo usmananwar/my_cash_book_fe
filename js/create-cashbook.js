@@ -5,6 +5,7 @@ requireLogin();
 const createCashbookForm = document.getElementById('createCashbookForm');
 const cashbookNameInput = document.getElementById('cashbookName');
 const cashbookDescriptionInput = document.getElementById('cashbookDescription');
+const cashbookColorInput = document.getElementById('cashbookColor');
 const createBtn = document.getElementById('createBtn');
 
 // Initialize
@@ -41,6 +42,7 @@ async function handleCreateCashbook(e) {
     
     const name = cashbookNameInput.value.trim();
     const description = cashbookDescriptionInput.value.trim();
+    const color = cashbookColorInput ? cashbookColorInput.value : 'blue';
     
     if (!name) {
         showNotification('Please enter a cashbook name', 'error');
@@ -61,7 +63,8 @@ async function handleCreateCashbook(e) {
     try {
         const payload = {
             name: name,
-            description: description || null
+            description: description || null,
+            color: color
         };
         
         const response = await fetchWithAuth(`${API_BASE}/cashbook/create`, {

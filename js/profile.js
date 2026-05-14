@@ -168,9 +168,9 @@ async function handlePasswordChange(event) {
     
     try {
         const response = await fetchWithAuthAndNotify(
-            `${API_BASE}/user/change-password`,
+            `${API_BASE}/auth/change-password`,
             {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     currentPassword,

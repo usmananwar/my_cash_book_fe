@@ -263,7 +263,7 @@ function createCashbookListItem(cashbook) {
     const item = document.createElement('div');
     item.className = 'cashbook-list-item';
     
-    const lastUsed = formatDateWithTime(cashbook.lastUsed);
+    const lastUsed = formatDateWithTime(cashbook.updatedDate);
     const balance = cashbook.balance || 0;
     
     item.innerHTML = `
